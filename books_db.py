@@ -63,7 +63,8 @@ class EditHandler(tornado.web.RequestHandler):
                               "code": 0
                           }
             self.finish(update_sucs)
-        else:    
+        else:
+            book = {}
             # If book not found, add the book
             for key in book_fields:
                 book[key] = self.get_argument(key, None)

@@ -16,9 +16,11 @@ Time format: yyyy-MM-dd HH:mm:ss, "2015-02-16 01:58:00"
 
 ```json
 url: /book/edit
+
 para:
 required:
     isbn: string
+
 optional:
     title: 标题, string
     alt: 豆瓣链接, string
@@ -38,6 +40,7 @@ optional:
                                    ]
     isdonated: true or false, if true then set owner to "113"
     donor: 捐赠人, object in array
+
 return:
     msg: ""
     code: 成功 0 错误 1
@@ -52,6 +55,7 @@ url: /book/insert
 para:
 required:
     isbn: string
+
 optional:
     title: 标题, string
     alt: 豆瓣链接, string
