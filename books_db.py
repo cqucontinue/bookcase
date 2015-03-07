@@ -28,12 +28,21 @@ class Application(tornado.web.Application):
             (r"/book/delete", DeleteHandler),
             (r"/book/get", GetHandler)
         ]
-        settings = dict(
-            debug=True
-        )
+        settings = {
+            "debug": True
+        }
         conn = pymongo.Connection("localhost", 27017)
         self.db = conn["continue"]
         tornado.web.Application.__init__(self, handlers, **settings)
+        
+        
+# class BaseHandler(tornado.web.RequestHandler):
+    # def initialize(self, db):
+    #    self.db = db
+    # (r"/", BaseHandler, dic(db=new db))
+    
+    # def prepare():
+        
 
 
 class EditHandler(tornado.web.RequestHandler):
@@ -48,7 +57,7 @@ class EditHandler(tornado.web.RequestHandler):
                           "msg": "no_isbn",
                           "code": 1
                       }
-            self.finish(no_isbn)
+            self.write(no_isbn)
         book = coll.find_one({"isbn": isbn})
         if book != None:
             # If book exist, update infomation
@@ -62,7 +71,7 @@ class EditHandler(tornado.web.RequestHandler):
                               "msg": "",
                               "code": 0
                           }
-            self.finish(update_sucs)
+            self.write(update_sucs)
         else:
             book = {}
             # If book not found, add the book
@@ -76,7 +85,7 @@ class EditHandler(tornado.web.RequestHandler):
                               "msg": "",
                               "code": 0
                           }
-            self.finish(insert_sucs)
+            self.write(insert_sucs)
 
 
 class InsertHandler(tornado.web.RequestHandler):
@@ -92,14 +101,14 @@ class InsertHandler(tornado.web.RequestHandler):
                           "msg": "no_isbn",
                           "code": 1
                       }
-            self.finish(no_isbn)
+            self.write(no_isbn)
         if coll.find_one({"isbn": isbn}) != None:
             # Book exist, return error
             book_exist = {
                              "msg": "book_exist",
                              "code": 1
                          }
-            self.finish(book_exist)
+            self.write(book_exist)
         else:    
             # Prepare the new book
             for key in book_fields:
@@ -112,7 +121,7 @@ class InsertHandler(tornado.web.RequestHandler):
                               "msg": "",
                               "code": 0
                           }
-            self.finish(insert_sucs)
+            self.write(insert_sucs)
 
 
 class UpdateHandler(tornado.web.RequestHandler):
@@ -127,7 +136,7 @@ class UpdateHandler(tornado.web.RequestHandler):
                           "msg": "no_isbn",
                           "code": 1
                       }
-            self.finish(no_isbn)
+            self.write(no_isbn)
         book = coll.find_one({"isbn": isbn})
         if book != None:
             for key in book_fields:
@@ -140,14 +149,14 @@ class UpdateHandler(tornado.web.RequestHandler):
                               "msg": "",
                               "code": 0
                           }
-            self.finish(update_sucs)
+            self.write(update_sucs)
         else:    
             # Book not found 
             book_not_found = {
                                  "msg": "book_not_found",
                                  "code": 1
                              }
-            self.finish(book_not_found)
+            self.write(book_not_found)
 
 class DeleteHandler(tornado.web.RequestHandler):
     def post(self):
@@ -158,14 +167,15 @@ class DeleteHandler(tornado.web.RequestHandler):
                           "msg": "no_isbn",
                           "code": 1
                       }
-            self.finish(no_isbn)
+            self.write(no_isbn)
         else:    
             coll.remove({"isbn": isbn});
             remove_sucs = {
                               "msg": "",
                               "code": 0
                           }
-            self.finish(remove_sucs)
+            self.write(remove_sucs)
+
 
 class GetHandler(tornado.web.RequestHandler):
     def post(self):
@@ -176,6 +186,7 @@ class GetHandler(tornado.web.RequestHandler):
             del book["_id"]
             books_r.append(book)
         self.write(json.dumps(books_r))
+
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
