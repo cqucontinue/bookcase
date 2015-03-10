@@ -6,7 +6,7 @@ Book Collection
 ##API
 ```json
 URI: http://book.113continue.com
-HTTP Method: POST
+HTTP Method: POST|GET
 Data type: JSON
 Time format: yyyy-MM-dd HH:mm:ss, "2015-02-16 01:58:00"
 ```

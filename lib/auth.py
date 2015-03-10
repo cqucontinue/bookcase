@@ -1,38 +1,39 @@
 #!/usr/bin/env python
 
+import superuuid
+from lib.base import BaseHandler
+
 import tornado.web
 import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
 import pymongo
-import uuid              # To generate random unique ID
-import secret_cookie     # To generate secret cookie key
+from datetime import datetime
 
 from tornado.options import define, options
-from datetime import datetime
-from bson.objectid import ObjectId    # To convert the ObjectId from a string
-from bson.json_util import dumps,loads    # Using python's json module with BSON documents
 
-define("port", default=8000, type=int, help="run on the given port")
-define("mongodb_host", default="127.0.0.1", help="database host")
-define("mongodb_port", default=27017, help="database port")
-define("mongodb_db", default="continue", help="database name")
+
+if __name__ == "__main__":
+    define("port", default=8000, type=int, help="run on the given port")
+    define("mongodb_host", default="127.0.0.1", help="database host")
+    define("mongodb_port", default=27017, help="database port")
+    define("mongodb_db", default="continue", help="database name")
 
 
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/", MainHandler),
-            (r"/login", LoginHandler),
-            (r"/logout", LogoutHandler),
-            (r"/register", RegisterHandler)
+            (r"/auth", AuthHandler),
+            (r"/auth/login", LoginHandler),
+            (r"/auth/logout", LogoutHandler),
+            (r"/auth/register", RegisterHandler)
         ]
         settings = {
             # Request head must include: X-XSRFToken
-            "login_url": "/login",
+            "login_url": "/auth/login",
             # "xsrf_cookies": True,
             # IF more than one processing?
-            "cookie_secret": secret_cookie.generate(),
+            "cookie_secret": superuuid.generate(),
             "debug": True
         }
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -42,40 +43,23 @@ class Application(tornado.web.Application):
                                   options.mongodb_port)
         self.db = conn[options.mongodb_db]
 
-
-class BaseHandler(tornado.web.RequestHandler):
-    @property
-    def db(self):
-        return self.application.db
-
-    def get_current_user(self):
-        user_id = self.get_secure_cookie("user_id")
-        if not user_id: return None
-        coll = self.db["users"]   # Connect to user's colletion
-        user = coll.find_one({"_id": ObjectId(user_id)})
-        user["_id"] = user_id
-        # return dumps(user)
-        return user
-
         
-class MainHandler(BaseHandler):
+class AuthHandler(BaseHandler):
     # @tornado.web.authenticated
     # def get(self):
     def get(self):
         if not self.current_user:
-            self.redirect("/login")
+            not_login = {
+                "errcode": 1,
+                "errmsg": "not_login"
+            }
+            self.write(not_login)
             return
-        self.write(self.current_user)
+        else:
+            self.write(self.current_user)
         
 
 class LoginHandler(BaseHandler):
-    def get(self):
-        self.write('<html><body><form action="/login" method="post">'
-                   'Name: <input type="text" name="account">'
-                   'Password: <input type="text" name="password">'
-                   '<input type="submit" value="Sign in">'
-                   '</form></body></html>')
-
     def post(self):
         account = self.get_argument("account", None)
         password = self.get_argument("password", None)
@@ -140,7 +124,7 @@ class RegisterHandler(BaseHandler):
 
         if not password:
             no_password = {
-                "errocde": 1,
+                "errcode": 1,
                 "errmsg": "no_password"
             }
             self.write(no_password)
@@ -149,7 +133,7 @@ class RegisterHandler(BaseHandler):
         if email:
             coll = self.db["users"]
             
-            if coll.find_one({"email": email}) != None:
+            if coll.find_one({"email": email}) is not None:
                 user_exist = {
                     "errcode": 1,
                     "errmsg": "user_exist"

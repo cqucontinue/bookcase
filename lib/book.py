@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 
-
-import os.path
-import json
-from datetime import datetime
+from lib.base import BaseHandler
 
 import tornado.locale
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
-
-
-from tornado.options import define, options
+import json
+from datetime import datetime
 import pymongo
 
+from tornado.options import define, options
 
-define("port", default=8000, type=int, help="run on the given port")
+
+if __name__ == "__main__":
+    define("port", default=8000, type=int, help="run on the given port")
 
 
 class Application(tornado.web.Application):
@@ -34,43 +33,33 @@ class Application(tornado.web.Application):
         conn = pymongo.Connection("localhost", 27017)
         self.db = conn["continue"]
         tornado.web.Application.__init__(self, handlers, **settings)
-        
-        
-# class BaseHandler(tornado.web.RequestHandler):
-    # def initialize(self, db):
-    #    self.db = db
-    # (r"/", BaseHandler, dic(db=new db))
-    
-    # def prepare():
-        
 
 
-class EditHandler(tornado.web.RequestHandler):
+class EditHandler(BaseHandler):
     def post(self):
-        coll = self.application.db.books        # Prepare database
+        coll = self.db.books        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
                        "tags", "owner", "isdonated", "donor"]
         isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
-                          "msg": "no_isbn",
-                          "code": 1
-                      }
+                "errmsg": "no_isbn",
+                "errcode": 1
+            }
             self.write(no_isbn)
         book = coll.find_one({"isbn": isbn})
-        if book != None:
-            # If book exist, update infomation
+        if book is not None:
+            # If book exist, update information
             for key in book_fields:
-                if book[key] == None:
+                if book[key] is None:
                     book[key] = self.get_argument(key, None)
             book["updated_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
             coll.save(book)
             # Update success
             update_sucs = {
-                              "msg": "",
-                              "code": 0
-                          }
+                "errcode": 0
+            }
             self.write(update_sucs)
         else:
             book = {}
@@ -82,15 +71,25 @@ class EditHandler(tornado.web.RequestHandler):
             coll.insert(book)
             # Save success
             insert_sucs = {
-                              "msg": "",
-                              "code": 0
-                          }
+                "errcode": 0
+            }
             self.write(insert_sucs)
 
 
-class InsertHandler(tornado.web.RequestHandler):
+class GetHandler(BaseHandler):
+    def get(self):
+        coll = self.db.books
+        books = coll.find()
+        books_r = []
+        for book in books:
+            del book["_id"]
+            books_r.append(book)
+        self.write(json.dumps(books_r))
+
+
+class InsertHandler(BaseHandler):
     def post(self):
-        coll = self.application.db.books        # Prepare database
+        coll = self.db.books        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
                        "tags", "owner", "isdonated", "donor"]
@@ -98,16 +97,16 @@ class InsertHandler(tornado.web.RequestHandler):
         isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
-                          "msg": "no_isbn",
-                          "code": 1
-                      }
+                "errmsg": "no_isbn",
+                "errcode": 1
+            }
             self.write(no_isbn)
-        if coll.find_one({"isbn": isbn}) != None:
+        if coll.find_one({"isbn": isbn}) is not None:
             # Book exist, return error
             book_exist = {
-                             "msg": "book_exist",
-                             "code": 1
-                         }
+                "errmsg": "book_exist",
+                "errcode": 1
+            }
             self.write(book_exist)
         else:    
             # Prepare the new book
@@ -118,74 +117,61 @@ class InsertHandler(tornado.web.RequestHandler):
             coll.insert(book)
             # Save success
             insert_sucs = {
-                              "msg": "",
-                              "code": 0
-                          }
+                "errcode": 0
+            }
             self.write(insert_sucs)
 
 
-class UpdateHandler(tornado.web.RequestHandler):
+class UpdateHandler(BaseHandler):
     def post(self):
-        coll = self.application.db.books        # Prepare database
+        coll = self.db.books        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
                        "tags", "owner", "isdonated", "donor"]
         isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
-                          "msg": "no_isbn",
-                          "code": 1
-                      }
+                "errmsg": "no_isbn",
+                "errcode": 1
+            }
             self.write(no_isbn)
         book = coll.find_one({"isbn": isbn})
-        if book != None:
+        if book is not None:
             for key in book_fields:
-                if book[key] == None:
+                if book[key] is None:
                     book[key] = self.get_argument(key, None)
             book["updated_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
             coll.save(book)
             # Update success
             update_sucs = {
-                              "msg": "",
-                              "code": 0
-                          }
+                "errcode": 0
+            }
             self.write(update_sucs)
         else:    
             # Book not found 
             book_not_found = {
-                                 "msg": "book_not_found",
-                                 "code": 1
-                             }
+                "errmsg": "book_not_found",
+                "errcode": 1
+            }
             self.write(book_not_found)
 
-class DeleteHandler(tornado.web.RequestHandler):
-    def post(self):
-        coll = self.application.db.books
+
+class DeleteHandler(BaseHandler):
+    def get(self, isbn):
+        coll = self.db.books
         isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
-                          "msg": "no_isbn",
-                          "code": 1
-                      }
+                "errmsg": "no_isbn",
+                "errcode": 1
+            }
             self.write(no_isbn)
         else:    
-            coll.remove({"isbn": isbn});
+            coll.remove({"isbn": isbn})
             remove_sucs = {
-                              "msg": "",
-                              "code": 0
-                          }
+                "errcode": 0
+            }
             self.write(remove_sucs)
-
-
-class GetHandler(tornado.web.RequestHandler):
-    def post(self):
-        coll = self.application.db.books
-        books = coll.find()
-        books_r = []
-        for book in books:
-            del book["_id"]
-            books_r.append(book)
-        self.write(json.dumps(books_r))
 
 
 if __name__ == "__main__":
