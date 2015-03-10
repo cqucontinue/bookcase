@@ -61,10 +61,10 @@ class AuthHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
     def post(self):
-        account = self.get_argument("account", None)
+        username = self.get_argument("username", None)
         password = self.get_argument("password", None)
 
-        if not account or not password:
+        if username or not password:
             para_error = {
                 "errcode": 1,
                 "errmsg": "para_error"
@@ -73,7 +73,7 @@ class LoginHandler(BaseHandler):
             return
 
         coll = self.db["users"]
-        user = coll.find_one({"email": account})
+        user = coll.find_one({"email": username})
         if not user:
             not_found = {
                 "errcode": 1,

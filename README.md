@@ -42,14 +42,16 @@ optional:
     donor: 捐赠人, object in array
 
 return:
-    msg: ""
-    code: 成功 0 错误 1
+    errmsg: ""
+    errcode: 成功 0 错误 1
 
 ```
 
 <!--
 ####Insert books
 ```json
+method: POST
+
 url: /book/insert
 
 para:
@@ -77,8 +79,8 @@ optional:
     donor: 捐赠人, object in array
 
 return: 
-    msg: 先返回空字符串
-    code: 成功 0, 失败 1
+    errmsg: 先返回空字符串
+    errcode: 成功 0, 失败 1
 ```
 
 ####Update book information
@@ -110,13 +112,15 @@ optional:
     donor: 捐赠人, object in array
 
 return:
-    msg: "book_not_found"
-    code: 成功 0, 失败 1
+    errmsg: "book_not_found"
+    errcode: 成功 0, 失败 1
 ```
 -->
 
 ####Get all books
 ```json
+method: GET
+
 url: /book/get
 
 return:
@@ -134,13 +138,84 @@ return:
 
 ####Delete book
 ```json
-url: /book/delete
+method: GET
 
+url: /book/delete/isbn
+Ex: /book/delete/9780136019299
+
+return:
+    errmsg: "book_not_found"
+    errcode: 成功 0, 失败 1
+```
 para:
 required:
     isbn: string
 
+
+####Register
+```json
+method: POST
+
+url: /auth/register
+
+para:
+required:
+    email: string
+    password: string
+
+optional:
+    firstname: string
+    lastname: string
+
 return:
-    msg: "book_not_found"
-    code: 成功 0, 失败 1
+    errcode: 1 错误 0 成功
+    errmsg: "no_email" | "no_password" | "user_existed"
+```
+
+####Login
+```json
+method: POST
+
+url: /auth/login
+
+para:
+required:
+    username: 现在用邮箱作为用户名
+    password: string
+    
+return:
+    errcode: 0 成功 1 失败
+    errmsg: "para_error" | "not_found" | "login_fail" 
+```
+
+
+####Logout
+```json
+method: GET
+
+url: /auth/logout
+
+return:
+    errcode: 0 成功
+```
+
+
+####Get user stat
+```json
+method: GET
+
+url: /auth
+
+return:
+    errcode: 1 错误
+    errmsg: "not_login"
+    
+    or
+    
+    {
+        "id": "",
+        "firstname": "",
+        "lastname": "",
+        "email": ""
+    }
 ```
