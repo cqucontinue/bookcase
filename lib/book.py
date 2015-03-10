@@ -159,7 +159,6 @@ class UpdateHandler(BaseHandler):
 class DeleteHandler(BaseHandler):
     def get(self, isbn):
         coll = self.db.books
-        isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
                 "errmsg": "no_isbn",

@@ -204,7 +204,7 @@ return:
 ```json
 method: GET
 
-url: /auth
+url: /auth/
 
 return:
     errcode: 1 错误
