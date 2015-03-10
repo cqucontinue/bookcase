@@ -64,7 +64,7 @@ class LoginHandler(BaseHandler):
         username = self.get_argument("username", None)
         password = self.get_argument("password", None)
 
-        if username or not password:
+        if not username or not password:
             para_error = {
                 "errcode": 1,
                 "errmsg": "para_error"
