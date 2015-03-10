@@ -29,7 +29,7 @@ class Application(tornado.web.Application):
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
             (r"/book/delete/([0-9]+)", DeleteHandler),
-            (r"/auth", AuthHandler),
+            (r"/auth/", AuthHandler),
             (r"/auth/login", LoginHandler),
             (r"/auth/logout", LogoutHandler),
             (r"/auth/register", RegisterHandler)
