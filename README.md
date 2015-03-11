@@ -2,10 +2,15 @@ Book Collection
 ===
 
 >To manage books in 113
+>Dev Server IP: 182.92.167.199
+>U can ssh continue@IP to update code and test your new feature 
+
 
 ##API
 ```json
 URI: http://book.113continue.com
+TMP DEV: http://182.92.167.199
+
 HTTP Method: POST|GET
 Data type: JSON
 Time format: yyyy-MM-dd HH:mm:ss, "2015-02-16 01:58:00"
@@ -216,6 +221,8 @@ return:
         "id": "",
         "firstname": "",
         "lastname": "",
-        "email": ""
+        "email": "",
+        "create_at": "",
+        "update_at": ""
     }
 ```
