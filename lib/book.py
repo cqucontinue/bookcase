@@ -16,7 +16,8 @@ from tornado.options import define, options
 
 if __name__ == "__main__":
     define("port", default=8000, type=int, help="run on the given port")
-
+    define("db_continue", default="continue", help="database name")
+    define("coll_books", default="books", help="book collection")
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -31,13 +32,13 @@ class Application(tornado.web.Application):
             "debug": True
         }
         conn = pymongo.Connection("localhost", 27017)
-        self.db = conn["continue"]
+        self.db = conn[options.db_continue]
         tornado.web.Application.__init__(self, handlers, **settings)
 
 
 class EditHandler(BaseHandler):
     def post(self):
-        coll = self.db.books        # Prepare database
+        coll = self.db[options.coll_books]        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
                        "tags", "owner", "isdonated", "donor"]
@@ -78,7 +79,7 @@ class EditHandler(BaseHandler):
 
 class GetHandler(BaseHandler):
     def get(self):
-        coll = self.db.books
+        coll = self.db[options.coll_books]
         books = coll.find()
         books_r = []
         for book in books:
@@ -89,7 +90,7 @@ class GetHandler(BaseHandler):
 
 class InsertHandler(BaseHandler):
     def post(self):
-        coll = self.db.books        # Prepare database
+        coll = self.db[options.coll_books]        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
                        "tags", "owner", "isdonated", "donor"]
@@ -124,7 +125,7 @@ class InsertHandler(BaseHandler):
 
 class UpdateHandler(BaseHandler):
     def post(self):
-        coll = self.db.books        # Prepare database
+        coll = self.db["options.coll_books"]        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
                        "tags", "owner", "isdonated", "donor"]
@@ -158,7 +159,7 @@ class UpdateHandler(BaseHandler):
 
 class DeleteHandler(BaseHandler):
     def get(self, isbn):
-        coll = self.db.books
+        coll = self.db[options.coll_books]
         if not isbn:
             no_isbn = {
                 "errmsg": "no_isbn",

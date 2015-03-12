@@ -10,8 +10,8 @@ U can ssh continue@IP to update code and test your new feature
 
 ##API
 ```json
-URI: http://book.113continue.com
-TMP DEV: http://182.92.167.199
+URI: http://book.113continue.com - Down!!!
+DEV: http://182.92.167.199
 
 HTTP Method: POST|GET
 Data type: JSON
@@ -167,16 +167,15 @@ url: /auth/register
 
 para:
 required:
-    email: string
+    member_id: string
     password: string
 
 optional:
-    firstname: string
-    lastname: string
+    fullname: string
 
 return:
     errcode: 1 错误 0 成功
-    errmsg: "no_email" | "no_password" | "user_existed"
+    errmsg: "no_member_id" | "no_password" | "member_existed"
 ```
 
 ####Login
@@ -187,7 +186,7 @@ url: /auth/login
 
 para:
 required:
-    username: 现在用邮箱作为用户名
+    member_id: 现在用学号作为用户名
     password: string
     
 return:
@@ -220,11 +219,11 @@ return:
     or
     
     {
-        "id": "",
-        "firstname": "",
-        "lastname": "",
-        "email": "",
-        "create_at": "",
-        "update_at": ""
+        "member_id": "",
+        "fullname": "",
+        "created": "",
+        "last_updated": "",
+        "avatar_path": "",
+        "url_token": ""
     }
 ```

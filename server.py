@@ -16,11 +16,15 @@ import pymongo
 
 from tornado.options import define, options
 
-# DEFINE
+# Define server
 define("port", default=8000, type=int, help="run on the given port")
+# Define mongodb server
 define("mongodb_host", default="127.0.0.1", help="database host")
 define("mongodb_port", default=27017, help="database port")
-define("mongodb_db", default="continue", help="database name")
+# Define DB and collections in mongodb
+define("db_continue", default="continue", help="database name")
+define("coll_books", default="books", help="book collection")
+define("coll_members", default="members", help="basic member information collection")
 
 
 class Application(tornado.web.Application):
@@ -37,6 +41,7 @@ class Application(tornado.web.Application):
         ]
         settings = {
             "login_url": "/auth/login",
+            # "xsrf_cookies": True,
             # Suite to one instance
             "cookie_secret": superuuid.generate(),
             "debug": True
@@ -45,7 +50,7 @@ class Application(tornado.web.Application):
 
         conn = pymongo.Connection(options.mongodb_host,
                                   options.mongodb_port)
-        self.db = conn[options.mongodb_db]
+        self.db = conn[options.db_continue]
 
 
 def main():

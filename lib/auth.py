@@ -17,13 +17,14 @@ if __name__ == "__main__":
     define("port", default=8000, type=int, help="run on the given port")
     define("mongodb_host", default="127.0.0.1", help="database host")
     define("mongodb_port", default=27017, help="database port")
-    define("mongodb_db", default="continue", help="database name")
+    define("db_continue", default="continue", help="database name")
+    define("coll_members", default="members", help="basic member information collection")
 
 
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/auth", AuthHandler),
+            (r"/auth/", AuthHandler),
             (r"/auth/login", LoginHandler),
             (r"/auth/logout", LogoutHandler),
             (r"/auth/register", RegisterHandler)
@@ -31,7 +32,7 @@ class Application(tornado.web.Application):
         settings = {
             # Request head must include: X-XSRFToken
             "login_url": "/auth/login",
-            # "xsrf_cookies": True,
+            "xsrf_cookies": True,
             # IF more than one processing?
             "cookie_secret": superuuid.generate(),
             "debug": True
@@ -41,7 +42,7 @@ class Application(tornado.web.Application):
         # Have one global connection to the book DB across all handlers
         conn = pymongo.Connection(options.mongodb_host, 
                                   options.mongodb_port)
-        self.db = conn[options.mongodb_db]
+        self.db = conn[options.db_continue]
 
         
 class AuthHandler(BaseHandler):
@@ -61,10 +62,10 @@ class AuthHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
     def post(self):
-        username = self.get_argument("username", None)
+        member_id = self.get_argument("member_id", None)
         password = self.get_argument("password", None)
 
-        if not username or not password:
+        if not member_id or not password:
             para_error = {
                 "errcode": 1,
                 "errmsg": "para_error"
@@ -72,9 +73,9 @@ class LoginHandler(BaseHandler):
             self.write(para_error)
             return
 
-        coll = self.db["users"]
-        user = coll.find_one({"email": username})
-        if not user:
+        coll = self.db[options.coll_members]
+        member = coll.find_one({"_id": member_id})
+        if not member:
             not_found = {
                 "errcode": 1,
                 "errmsg": "not_found"
@@ -82,7 +83,7 @@ class LoginHandler(BaseHandler):
             self.write(not_found)
             return
         else:
-            if password != user["password"]:
+            if password != member["password"]:
                 login_fail = {
                     "errcode": 1,
                     "errmsg": "login_fail"
@@ -90,7 +91,7 @@ class LoginHandler(BaseHandler):
                 self.write(login_fail)
                 return
             else:
-                self.set_secure_cookie("user_id", user["_id"].__str__())
+                self.set_secure_cookie("member_id", member["_id"])
                 login_sucs = {
                     "errcode": 0
                 }
@@ -99,9 +100,8 @@ class LoginHandler(BaseHandler):
 
 class LogoutHandler(BaseHandler):
     def get(self):
-        # TODO
         # @authenticated
-        self.clear_cookie("user_id")
+        self.clear_cookie("member_id")
         logout_sucs = {
             "errcode": 0
         }
@@ -110,16 +110,17 @@ class LogoutHandler(BaseHandler):
 
 class RegisterHandler(BaseHandler):
     def post(self):
-        user_fields = ["email", "firstname", "lastname", "password"]
+        member_fields = ["member_id", "password", "fullname", "url_token",
+                         "password_hash", "avatar_path"]
 
-        email = self.get_argument("email", None)
+        member_id = self.get_argument("member_id", None)
         password = self.get_argument("password", None)
-        if not email:
-            no_email = {
+        if not member_id:
+            no_member_id = {
                 "errcode": 1,
-                "errmsg": "no_email"
+                "errmsg": "no_member_id"
             }
-            self.write(no_email)
+            self.write(no_member_id)
             return
 
         if not password:
@@ -130,23 +131,28 @@ class RegisterHandler(BaseHandler):
             self.write(no_password)
             return
 
-        if email:
-            coll = self.db["users"]
+        if member_id:
+            coll = self.db[options.coll_members]
             
-            if coll.find_one({"email": email}) is not None:
-                user_exist = {
+            if coll.find_one({"_id": member_id}) is not None:
+                member_exist = {
                     "errcode": 1,
-                    "errmsg": "user_exist"
+                    "errmsg": "member_exist"
                 }
-                self.write(user_exist)
+                self.write(member_exist)
                 return
 
-            user = {}
-            for key in user_fields:
-                user[key] = self.get_argument(key, None)
-            user["created_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
-            user["updated_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
-            coll.insert(user)
+            member = {
+                "_id": member_id
+            }
+            for key in member_fields:
+                if key is "member_id":
+                    continue
+                member[key] = self.get_argument(key, None)
+            member["created"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
+            member["last_updated"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
+            coll.insert(member)
+
             regist_sucs = {
                 "errcode": 0
             }
