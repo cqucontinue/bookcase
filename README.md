@@ -8,6 +8,42 @@ Dev Server IP: 182.92.167.199
 U can ssh continue@IP to update code and test your new feature 
 ```
 
+##noSQL DB model
+```json
+mongodb:
+    - database: cotinue
+        - collections: contact, members, info, books
+
+members {
+    "_id": member_id, NOT NULL,
+    "fullname": string, DEFAULT NULL,
+    "password": string, NOT NULL,
+    "password_hash": string, DEFAULT NULL,
+    "url_token": string, DEFAULT NULL,
+    "avatar_path": string, DEFAULT NULL,
+    "created": string, NOT NULL,
+    "last_updated": string, NOT NULL
+}
+
+contact {
+    "_id": member_id, NOT NULL,
+    "email": string, NULL
+    "phone": string, NULL
+    ...
+}
+
+info {
+    "_id": member_id, NOT NULL,
+    "grade": string, DEFAULT NULL,
+    "gender": string, DEFAULT NULL,
+    "school": string, DEFAULT NULL,
+    "self_introduction": string, DEFAULT NULL,
+    ...
+}
+
+```
+
+
 ##API
 ```json
 URI: http://book.113continue.com - Down!!!
