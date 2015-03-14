@@ -6,6 +6,7 @@ from lib.book import (GetHandler, EditHandler,
                       DeleteHandler)
 from lib.auth import (AuthHandler, LoginHandler,
                       LogoutHandler, RegisterHandler)
+from lib.search import SearchHandler
 from lib import superuuid
 # Public module
 import tornado.locale
@@ -33,6 +34,7 @@ class Application(tornado.web.Application):
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
             (r"/book/delete/([0-9]+)", DeleteHandler),
+            (r"/book/search", SearchHandler),
             (r"/auth/", AuthHandler),
             (r"/auth/login", LoginHandler),
             (r"/auth/logout", LogoutHandler),

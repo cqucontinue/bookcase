@@ -28,3 +28,4 @@ class BaseHandler(tornado.web.RequestHandler):
         del member["password_hash"]
         # return dumps(user)
         return member
+
