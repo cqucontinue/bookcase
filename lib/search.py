@@ -48,7 +48,8 @@ class SearchHandler(BaseHandler):
                 "errcode": 1
             }
             self.write(no_qs)
-        coll = self.db["books"]
+        # coll = self.db["books"]
+        coll = self.db["sbooks"]
         
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",

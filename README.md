@@ -17,6 +17,7 @@ mongodb:
 members {
     "_id": member_id, NOT NULL,
     "fullname": string, DEFAULT NULL,
+    "nickname": string, DEFAULT NULL,
     "password": string, NOT NULL,
     "password_hash": string, DEFAULT NULL,
     "url_token": string, DEFAULT NULL,
@@ -73,14 +74,7 @@ optional:
     price: 标价, string
     tags: object in array, [{"name": "computer science"}, ...]
     
-    owner: 所有者, object in array, [
-                                        {
-                                             "name": "bob",
-                                             "grade": "2012",
-                                             ...
-                                        },
-                                        ...
-                                   ]
+    owner: 所有者, array, [{}, {}]
     isdonated: true or false, if true then set owner to "113"
     donor: 捐赠人, object in array
 

@@ -20,8 +20,10 @@ def gen_url(tag):
 for tag in tags:
     r = urllib2.urlopen(gen_url(tag)).read()
     dr = json.loads(r)
-    for idx in dr:
-        sbooks.insert(idx)
+    books = dr["books"]
+    for book in books:
+        sbooks.insert(book)
+    print len(books)
 
 
 print "Down!"
