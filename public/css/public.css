@@ -1,0 +1,71 @@
+﻿body {
+    background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAQDAwMDAwQDAwQFBAMEBQcFBAQFBwgGBgcGBggKCAgICAgICggKCgsKCggNDQ4ODQ0SEhISEhQUFBQUFBQUFBT/2wBDAQUFBQgHCA8KCg8SDwwPEhYVFRUVFhYUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABUAFIDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAJRAAAQIFBAEFAAAAAAAAAAAAAAIDAQQSNFNzkrHSERQiQlFi/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AN/AAJJuXNNHKwKgAAACSblzTRysCoAAAAASTcuaaOVgVAAAAEk3LmmjlYFQAACVMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AUzORvZHuBKEJj1C/ejzQj4R+1foCtMzkb2R7gKZnI3sj3AUzORvZHuBUABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAAAEk3LmmjlYFQAAABJNy5po5WBUAAAAAJJuXNNHKwKgAAACSblzTRysCoAABKmZyN7I9wFMzkb2R7gShCY9Qv3o80I+EftX6ArTM5G9ke4CmZyN7I9wFMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AqAAkm5c00crAqAAAAJJuXNNHKwKgAAAABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAf/9k=') /*../imgs/login-bg.jpg*/;
+    background-repeat: repeat;
+}
+
+#login-content {
+    background-color: #ffffff;
+    width: 441px;
+    height: auto;
+    border: 1px solid rgba(0,0,0,0.2);
+    margin: 30px auto auto auto;
+    border-radius: 3px;
+    box-shadow: 2px -2px  3px 1px rgba(0,0,0,0.2);
+}
+
+#login-logo {
+    display: block;
+    margin: 43px auto 33px auto;
+    width: 201px;
+    height: 87px;
+}
+
+#login-tip {
+    width: 247px;
+    margin: 0 auto 20px auto;
+    height: 14px;
+    font-size: 14px;
+    color: #ff0000;
+}
+
+#input-content {
+    margin: 0 auto 65px auto;
+    width: 247px;
+    height: auto;
+}
+
+input {
+    color: #667580;
+    display: block;
+}
+input:focus {
+    outline-color: rgba(0, 0, 0, 0);
+}
+
+#username, #password {
+    width: 232px;
+    height: 17px;
+    margin-bottom: 23px;
+    border: 2px solid #3F84B5;
+    padding: 7px 5px 7px 5px;
+
+}
+
+#login-buttom {
+    display: block;
+    margin: 43px auto auto auto;
+    width: 80px;
+    height: 23px;
+    background-color: #E6F2F7;
+    outline-color: #58ACED;
+    border: 1px solid #58ACED;
+    color: #697883;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 2px;
+    box-shadow: none;
+    cursor: pointer;
+}
+#login-buttom:focus {
+    outline-color: rgba(0, 0, 0, 0);
+}
