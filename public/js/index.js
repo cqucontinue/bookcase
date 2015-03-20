@@ -60,11 +60,71 @@ function handleDonatePage() {
         this.onkeydown = function (event) {
             var e = event || window.event;
 
+            // if not Enter key, return
             if (e && e.keyCode != 13) return;
-            else {
-                alert("hah")
-            }
+            
+            var isbnCode = isbnBox.value;
+            
+            var url = 'https://api.douban.com/v2/book/isbn/' + isbnCode;
+
+            //var xhr = new XMLHttpRequest();
+            
+            ////var xhr = createXHR();
+            //xhr.onload = function () {
+            //    var responJSON = JSON.parse(xhr.responseText);
+            //    // if not found this book
+            //    if (responJSON.msg && responJSON.msg == 'book_not_found') {
+            //        return;
+            //    } else {
+            //        var bookInf = document.getElementsByClassName('book-inf')[0];
+            //        bookInf.getElementsByClassName('title')[0].lastChild.innerText
+            //            = responJSON.title;
+            //    }
+            //}
+
+            //xhr.open("get", url, true);
+            //xhr.setRequestHeader("dataType", "jsonp");
+            //xhr.send();
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                async: false,
+                dataType: 'jsonp',
+                jsonp: "callback",
+                success: function (json) {
+                    reflashBookInf(json)
+                },
+                error: function () {
+                    alert('fail');
+                }
+            })
         }
     }
+}
+
+function reflashBookInf (json) {
+
+    // if not found this book
+    if (json.msg && json.msg == 'book_not_found') {
+        return;
+    } else {
+        var bookInf = document.getElementsByClassName('book-inf')[0];
+
+        bookInf.getElementsByClassName('cover')[0].setAttribute("src", json.images.large);
+
+        bookInf.getElementsByClassName('title')[0].lastChild.innerText
+            = json.title;
+        bookInf.getElementsByClassName('author')[0].lastChild.innerText
+            = json.author[0];
+        bookInf.getElementsByClassName('publisher')[0].lastChild.innerText
+            = json.publisher;
+        bookInf.getElementsByClassName('publish-time')[0].lastChild.innerText
+            = json.pubdate;
+        bookInf.getElementsByClassName('isbn')[0].lastChild.innerText
+            = json.isbn13 || json.isbn10;
+
+    }
+    
 }
 
