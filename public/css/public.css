@@ -1,4 +1,11 @@
-﻿body {
+﻿input:focus {
+    outline-color: rgba(0, 0, 0, 0);
+}
+
+/***********************************************
+    work for login.html
+***********************************************/
+#login-page {
     background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAQDAwMDAwQDAwQFBAMEBQcFBAQFBwgGBgcGBggKCAgICAgICggKCgsKCggNDQ4ODQ0SEhISEhQUFBQUFBQUFBT/2wBDAQUFBQgHCA8KCg8SDwwPEhYVFRUVFhYUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABUAFIDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAJRAAAQIFBAEFAAAAAAAAAAAAAAIDAQQSNFNzkrHSERQiQlFi/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AN/AAJJuXNNHKwKgAAACSblzTRysCoAAAAASTcuaaOVgVAAAAEk3LmmjlYFQAACVMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AUzORvZHuBKEJj1C/ejzQj4R+1foCtMzkb2R7gKZnI3sj3AUzORvZHuBUABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAAAEk3LmmjlYFQAAABJNy5po5WBUAAAAAJJuXNNHKwKgAAACSblzTRysCoAABKmZyN7I9wFMzkb2R7gShCY9Qv3o80I+EftX6ArTM5G9ke4CmZyN7I9wFMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AqAAkm5c00crAqAAAAJJuXNNHKwKgAAAABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAf/9k=') /*../imgs/login-bg.jpg*/;
     background-repeat: repeat;
 }
@@ -28,21 +35,21 @@
     color: #ff0000;
 }
 
-#input-content {
+#login-page #input-content {
     margin: 0 auto 65px auto;
     width: 247px;
     height: auto;
 }
 
-input {
+#login-page input {
     color: #667580;
     display: block;
 }
-input:focus {
+#login-page input:focus {
     outline-color: rgba(0, 0, 0, 0);
 }
 
-#username, #password {
+#login-page #username, #login-page #password {
     width: 232px;
     height: 17px;
     margin-bottom: 23px;
@@ -68,4 +75,102 @@ input:focus {
 }
 #login-buttom:focus {
     outline-color: rgba(0, 0, 0, 0);
+}
+
+/******************************************
+    work for donate.html
+******************************************/
+
+#donate-page {
+    margin: 0;
+    background-color: rgba(0, 0 , 0, 0.1);
+}
+
+#public-head {
+    display: block;
+    width: 100%;
+    height: 60px;
+    background-color: #66B5D3;
+}
+
+#donate-content {
+    display: block;
+    margin: 0 auto 30px auto;
+    width: 930px;
+    height: 964px;
+    background-color: ActiveBorder;
+}
+
+#donate-content #title {
+    /*position: relative;*/
+    width: 100%;
+    height: 500px;
+    background-color: #667580;
+}
+
+#donate-content #search-box {
+    /*display: inline-flex;*/
+    position: relative;
+    top: 365px;
+    left: 156px;
+    height: 38px;
+    width: 612px;
+    /*margin: 365px 155px 155px auto;*/
+    border: 3px solid #0185B6;
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 1px
+}
+
+#donate-content #tip {
+    width: 100%;
+    height: 19px;
+    margin-top: 20px;
+}
+
+#donate-content #tip .line {
+    width: 361px;
+    height: 1px;
+    background-color: #CECECE;
+    margin: 9px auto;
+    float: left;
+}
+
+#donate-content #tip span {
+    float: left;
+    width: 208px;
+    height: 100%;
+    text-align: center;
+    letter-spacing: 1px;
+    color: #818181;
+}
+
+#donate-content .book-inf {
+    width: 100%;
+    height: 360px;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+#donate-content .book-inf .cover {
+    display: block;
+    margin: 3px;
+    width: 197px;
+    height: 270px;
+    float: left;
+}
+
+#donate-content .book-inf .details {
+    width: 203px;
+    height: 276px;
+    margin-left: 15px;
+    float: left;
+}
+
+#donate-content .book-inf .details .inf {
+    display: block;
+}
+
+#donate-content .book-inf .details .inf span {
+    color: rgba(0, 0, 0, 0.3);
 }
