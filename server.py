@@ -43,7 +43,7 @@ class Application(tornado.web.Application):
         ]
         settings = {
             "login_url": "/auth/login",
-            # "xsrf_cookies": True,
+            #"xsrf_cookies": True,
             # Suite to one instance
             "cookie_secret": superuuid.generate(),
             "debug": True

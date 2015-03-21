@@ -1,3 +1,4 @@
 # Python debug files
 *.pyc
+*.py~
 __pycache__
