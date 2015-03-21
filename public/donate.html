@@ -2,11 +2,20 @@
 <html>
 <head>
   <title>Continue-donate</title>
-  <link rel="stylesheet" href="../css/public.css" />
-  <script src="../js/jquery-1.8.3.min.js"></script>
+  <link rel="stylesheet" href="css/public.css" />
+  <script src="js/checkLogin.js"></script>
+  
 </head>
 <body id="donate-page">
-  <header id="public-head"></header>
+  <header id="public-head">
+    <div id="header-content">
+      <img id="logo" src="imgs/donate-logo.png" />
+      <nav id="public-nav">
+        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="javascript:;" target="_self">DONATE</a>|<a class="wonderlist" href="javascript:;" target="_self">WONDUWELIST</a>
+      </nav>
+      <div id="personal-inf"></div>
+    </div>
+  </header>
   <content id="donate-content">
     <div id="title">
       <input id="search-box" placeholder="SEARCH" />
@@ -24,14 +33,13 @@
         <span class="publisher inf">出版社： <span></span></span>
         <span class="publish-time inf">出版时间： <span></span></span>
         <span class="isbn inf">ISBN： <span></span></span>
-        <a class="get-more" href=":;javascript">了解更多</a>
+        <a class="get-more" href="javascript:;" target="_blank">了解更多</a>
       </div>
       <div id="donate-tip">提醒：书籍捐出后，原所有者 有权将书从bookcase中抽出。</div>
       <button type="submit" id="donate-identify">确认捐献</button>
     </div>
   </content>
-  
-  <script src="../js/index.js"></script>
-
+  <script src="js/jquery-1.8.3.min.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>

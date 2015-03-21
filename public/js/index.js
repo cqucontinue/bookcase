@@ -1,4 +1,8 @@
 ﻿
+
+// 
+// choose which part of js code execute
+//
 var pageTitle = document.title;
 
 switch (pageTitle) {
@@ -35,10 +39,12 @@ function handleLoginPage() {
 
         var xhr = new XMLHttpRequest();
         xhr.onload = function () {
-            var responJSON = JSON.parse(xhr.responseText);
-            if (responJSON.errcode == 1) {
+            var res = JSON.parse(xhr.responseText);
+            if (res.errcode && res.errcode == 1) {
                 tip.innerText = '账号或密码错误！';
                 tip.style.display = 'block';
+            } else {
+                location.href = '/donate.html';
             }
         }
 
@@ -48,10 +54,18 @@ function handleLoginPage() {
     }
 }
 
+var bookInf = {};
 //
 //
 //
 function handleDonatePage() {
+
+    
+    // change the style of nav
+    var publicNav = document.getElementById('public-nav');
+    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
+    publicNav.getElementsByClassName('donate')[0].style.color = '#0084B5';
+    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#767779';
 
     var isbnBox = document.getElementById('search-box');
 
@@ -67,25 +81,7 @@ function handleDonatePage() {
             
             var url = 'https://api.douban.com/v2/book/isbn/' + isbnCode;
 
-            //var xhr = new XMLHttpRequest();
-            
-            ////var xhr = createXHR();
-            //xhr.onload = function () {
-            //    var responJSON = JSON.parse(xhr.responseText);
-            //    // if not found this book
-            //    if (responJSON.msg && responJSON.msg == 'book_not_found') {
-            //        return;
-            //    } else {
-            //        var bookInf = document.getElementsByClassName('book-inf')[0];
-            //        bookInf.getElementsByClassName('title')[0].lastChild.innerText
-            //            = responJSON.title;
-            //    }
-            //}
-
-            //xhr.open("get", url, true);
-            //xhr.setRequestHeader("dataType", "jsonp");
-            //xhr.send();
-
+            // CROS
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -98,7 +94,47 @@ function handleDonatePage() {
                 error: function () {
                     alert('fail');
                 }
-            })
+            });
+        }
+    }
+
+    // click submit
+    var donateSubmit = document.getElementById('donate-identify');
+
+    donateSubmit.onclick = function () {
+        if (!bookInf.isbn) {
+            alert("请输入所捐书籍的ISBN");
+            return;
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+
+                var res = JSON.parse(xhr.responseText);
+                // if err
+                if (res.errcode == 1) {
+                    alert("失败");
+                } else {
+                    alert("捐赠成功！");
+                    location.href = '/donate.html';
+                }
+            }
+
+            // remark the book inf 
+            var data = new FormData();
+            data.append('isbn', bookInf.isbn);
+            data.append('title', bookInf.title);
+            data.append('alt', bookInf.alt);
+            data.append('author', bookInf.author);
+            data.append('publisher', bookInf.publisher);
+            data.append('pub_date', bookInf.pubDate);
+            data.append('image', bookInf.image);
+            data.append('donor', bookInf.donor);
+
+            //Object.toString(bookInf)
+            xhr.open('post', '/book/edit', true);
+            //alert(bookInf.isbn)
+            xhr.send(data);
+            //
         }
     }
 }
@@ -109,22 +145,33 @@ function reflashBookInf (json) {
     if (json.msg && json.msg == 'book_not_found') {
         return;
     } else {
-        var bookInf = document.getElementsByClassName('book-inf')[0];
+        // reflash the inf on web
+        var bookInfNode = document.getElementsByClassName('book-inf')[0];
 
-        bookInf.getElementsByClassName('cover')[0].setAttribute("src", json.images.large);
+        bookInfNode.getElementsByClassName('cover')[0].setAttribute("src", json.images.large);
+        bookInfNode.getElementsByClassName('get-more')[0].setAttribute("href", json.alt);
 
-        bookInf.getElementsByClassName('title')[0].lastChild.innerText
+        bookInfNode.getElementsByClassName('title')[0].lastChild.innerText
             = json.title;
-        bookInf.getElementsByClassName('author')[0].lastChild.innerText
+        bookInfNode.getElementsByClassName('author')[0].lastChild.innerText
             = json.author[0];
-        bookInf.getElementsByClassName('publisher')[0].lastChild.innerText
+        bookInfNode.getElementsByClassName('publisher')[0].lastChild.innerText
             = json.publisher;
-        bookInf.getElementsByClassName('publish-time')[0].lastChild.innerText
+        bookInfNode.getElementsByClassName('publish-time')[0].lastChild.innerText
             = json.pubdate;
-        bookInf.getElementsByClassName('isbn')[0].lastChild.innerText
+        bookInfNode.getElementsByClassName('isbn')[0].lastChild.innerText
             = json.isbn13 || json.isbn10;
+        
+        // store the book inf
+        bookInf.isbn      = json.isbn13;
+        bookInf.title     = json.title;
+        bookInf.alt       = json.alt;
+        bookInf.author    = json.author;
+        bookInf.publisher = json.publisher;
+        bookInf.pubDate   = json.pubdate;
+        bookInf.image     = json.images.large;
 
+        bookInf.donor = SubCookieUtil.get("identify", "userId");
     }
     
 }
-
