@@ -49,6 +49,7 @@ class EditHandler(BaseHandler):
                 "errcode": 1
             }
             self.write(no_isbn)
+            return
         book = coll.find_one({"isbn": isbn})
         if book is not None:
             # If book exist, update information
@@ -62,6 +63,7 @@ class EditHandler(BaseHandler):
                 "errcode": 0
             }
             self.write(update_sucs)
+            return
         else:
             book = {}
             # If book not found, add the book
@@ -103,6 +105,7 @@ class InsertHandler(BaseHandler):
                 "errcode": 1
             }
             self.write(no_isbn)
+            return
         if coll.find_one({"isbn": isbn}) is not None:
             # Book exist, return error
             book_exist = {
@@ -110,6 +113,7 @@ class InsertHandler(BaseHandler):
                 "errcode": 1
             }
             self.write(book_exist)
+            return
         else:    
             # Prepare the new book
             for key in book_fields:
@@ -137,6 +141,7 @@ class UpdateHandler(BaseHandler):
                 "errcode": 1
             }
             self.write(no_isbn)
+            return
         book = coll.find_one({"isbn": isbn})
         if book is not None:
             for key in book_fields:
@@ -149,6 +154,7 @@ class UpdateHandler(BaseHandler):
                 "errcode": 0
             }
             self.write(update_sucs)
+            return
         else:    
             # Book not found 
             book_not_found = {
@@ -167,6 +173,7 @@ class DeleteHandler(BaseHandler):
                 "errcode": 1
             }
             self.write(no_isbn)
+            return
         else:    
             coll.remove({"isbn": isbn})
             remove_sucs = {
