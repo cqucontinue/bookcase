@@ -80,6 +80,7 @@ class EditHandler(BaseHandler):
 class GetHandler(BaseHandler):
     def get(self):
         coll = self.db[options.coll_books]
+        # coll = self.db["sbooks"]
         books = coll.find()
         books_r = []
         for book in books:

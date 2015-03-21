@@ -1,0 +1,3 @@
+# Python debug files
+*.pyc
+__pycache__
