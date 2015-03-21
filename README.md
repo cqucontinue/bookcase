@@ -184,3 +184,12 @@ return:
         "url_token": ""
     }
 ```
+
+
+##Server about
+```shell
+nginx 1.6.2 - proxy pass
+supervisor - daemon
+    |
+    |--server.py
+```
