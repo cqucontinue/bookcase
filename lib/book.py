@@ -19,12 +19,11 @@ if __name__ == "__main__":
     define("db_continue", default="continue", help="database name")
     define("coll_books", default="books", help="book collection")
 
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/book/edit", EditHandler),
-            (r"/book/insert", InsertHandler),
-            (r"/book/update", UpdateHandler),
             (r"/book/delete", DeleteHandler),
             (r"/book/get", GetHandler)
         ]
@@ -89,79 +88,6 @@ class GetHandler(BaseHandler):
             del book["_id"]
             books_r.append(book)
         self.write(json.dumps(books_r))
-
-
-class InsertHandler(BaseHandler):
-    def post(self):
-        coll = self.db[options.coll_books]        # Prepare database
-        book_fields = ["isbn", "title", "alt", "author",
-                       "publisher", "image", "price",
-                       "tags", "owner", "isdonated", "donor"]
-        book = {}
-        isbn = self.get_argument("isbn", None)
-        if not isbn:
-            no_isbn = {
-                "errmsg": "no_isbn",
-                "errcode": 1
-            }
-            self.write(no_isbn)
-            return
-        if coll.find_one({"isbn": isbn}) is not None:
-            # Book exist, return error
-            book_exist = {
-                "errmsg": "book_exist",
-                "errcode": 1
-            }
-            self.write(book_exist)
-            return
-        else:    
-            # Prepare the new book
-            for key in book_fields:
-                book[key] = self.get_argument(key, None)
-            book["created_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
-            book["updated_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
-            coll.insert(book)
-            # Save success
-            insert_sucs = {
-                "errcode": 0
-            }
-            self.write(insert_sucs)
-
-
-class UpdateHandler(BaseHandler):
-    def post(self):
-        coll = self.db["options.coll_books"]        # Prepare database
-        book_fields = ["isbn", "title", "alt", "author",
-                       "publisher", "image", "price",
-                       "tags", "owner", "isdonated", "donor"]
-        isbn = self.get_argument("isbn", None)
-        if not isbn:
-            no_isbn = {
-                "errmsg": "no_isbn",
-                "errcode": 1
-            }
-            self.write(no_isbn)
-            return
-        book = coll.find_one({"isbn": isbn})
-        if book is not None:
-            for key in book_fields:
-                if book[key] is None:
-                    book[key] = self.get_argument(key, None)
-            book["updated_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
-            coll.save(book)
-            # Update success
-            update_sucs = {
-                "errcode": 0
-            }
-            self.write(update_sucs)
-            return
-        else:    
-            # Book not found 
-            book_not_found = {
-                "errmsg": "book_not_found",
-                "errcode": 1
-            }
-            self.write(book_not_found)
 
 
 class DeleteHandler(BaseHandler):

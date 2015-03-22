@@ -6,6 +6,9 @@ from lib.book import (GetHandler, EditHandler,
                       DeleteHandler)
 from lib.auth import (AuthHandler, LoginHandler,
                       LogoutHandler, RegisterHandler)
+from lib.wunderlist import (WunEditHandler,
+                            WunSearchHandler)
+from lib.vote import VoteHandler
 from lib.search import SearchHandler
 from lib import superuuid
 # Public module
@@ -26,6 +29,7 @@ define("mongodb_port", default=27017, help="database port")
 define("db_continue", default="continue", help="database name")
 define("coll_books", default="books", help="book collection")
 define("coll_members", default="members", help="basic member information collection")
+define("coll_wunder", default="wunbooks", help="wunder books collection")
 
 
 class Application(tornado.web.Application):
@@ -38,7 +42,10 @@ class Application(tornado.web.Application):
             (r"/auth/", AuthHandler),
             (r"/auth/login", LoginHandler),
             (r"/auth/logout", LogoutHandler),
-            (r"/auth/register", RegisterHandler)
+            (r"/auth/register", RegisterHandler),
+            (r"/wunderlist/search", WunSearchHandler),
+            (r"/wunderlist/edit", WunEditHandler),
+            (r"/wunderlist/vote", VoteHandler)
             # Add new Handler HERE
         ]
         settings = {
