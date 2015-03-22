@@ -27,7 +27,7 @@ class Application(tornado.web.Application):
             debug=True
         )
         conn = pymongo.Connection("localhost", 27017)
-        self.db = conn["continuetry"]
+        self.db = conn["continue"]
         tornado.web.Application.__init__(self, handlers, **settings)
 
 
@@ -42,7 +42,7 @@ class WunSearchHandler(BaseHandler):
             self.write(no_qs) 
             return
             
-        coll = self.db["sbooks"]
+        coll = self.db["books"]
         #add two vote attribute
         book_fields = ["isbn", "vote_count","voter","title", 
                        "alt", "author",
@@ -86,7 +86,7 @@ class WunEditHandler(BaseHandler):
                            "publisher", "image", "price",
                            "tags", "isdonated", "donor"]
         #wunderlist database
-        coll_second = self.db["bbooks"]
+        coll_second = self.db["wunderbooks"]
         Wunbook = {}
         Wunbook["voter"] = []
         Wunbook["vote_count"] = 0
