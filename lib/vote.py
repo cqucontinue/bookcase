@@ -26,7 +26,7 @@ class Application(tornado.web.Application):
             debug=True
         )
         conn = pymongo.Connection("localhost", 27017)
-        self.db = conn["continuetry"]
+        self.db = conn["continue"]
         tornado.web.Application.__init__(self, handlers, **settings)
 
 class VoteHandler(BaseHandler):
@@ -59,7 +59,7 @@ class VoteHandler(BaseHandler):
                 return
                 
         #wunderlist database
-        coll = self.db["bbooks"]
+        coll = self.db["wunderbooks"]
         vote_book = coll.find_one({"isbn":isbn})
 
         #confirm user vote or not vote
