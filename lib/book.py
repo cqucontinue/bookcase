@@ -41,7 +41,7 @@ class EditHandler(BaseHandler):
         coll = self.db[options.coll_books]        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image", "price",
-                       "tags", "owner", "isdonated", "donor", "pub_date"]
+                       "tags", "isdonated", "donor", "pub_date"]
         isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
