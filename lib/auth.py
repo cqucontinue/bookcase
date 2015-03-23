@@ -25,13 +25,14 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/auth/", AuthHandler),
+            (r"/auth/nologin", NologinHandler),
             (r"/auth/login", LoginHandler),
             (r"/auth/logout", LogoutHandler),
             (r"/auth/register", RegisterHandler)
         ]
         settings = {
             # Request head must include: X-XSRFToken
-            "login_url": "/auth/login",
+            "login_url": "/auth/nologin",
             "xsrf_cookies": True,
             # IF more than one processing?
             "cookie_secret": superuuid.generate(),
@@ -46,19 +47,19 @@ class Application(tornado.web.Application):
 
         
 class AuthHandler(BaseHandler):
-    # @tornado.web.authenticated
-    # def get(self):
+    @tornado.web.authenticated
     def get(self):
-        if not self.current_user:
-            not_login = {
-                "errcode": 1,
-                "errmsg": "not_login"
-            }
-            self.write(not_login)
-            return
-        else:
-            self.write(self.current_user)
-        
+        self.write(self.current_user)
+
+
+class NologinHandler(BaseHandler):
+    def get(self):
+        not_login = {
+            "errmsg": "not_login",
+            "errcode": 1
+        }
+        self.write(not_login)
+
 
 class LoginHandler(BaseHandler):
     def post(self):
@@ -99,8 +100,8 @@ class LoginHandler(BaseHandler):
 
 
 class LogoutHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
-        # @authenticated
         self.clear_cookie("member_id")
         logout_sucs = {
             "errcode": 0

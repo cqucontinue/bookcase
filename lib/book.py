@@ -39,7 +39,7 @@ class EditHandler(BaseHandler):
     def post(self):
         coll = self.db[options.coll_books]        # Prepare database
         book_fields = ["isbn", "title", "alt", "author",
-                       "publisher", "image", "price",
+                       "publisher", "image",
                        "tags", "isdonated", "donor", "pub_date"]
         isbn = self.get_argument("isbn", None)
         if not isbn:
@@ -81,7 +81,6 @@ class EditHandler(BaseHandler):
 class GetHandler(BaseHandler):
     def get(self):
         coll = self.db[options.coll_books]
-        # coll = self.db["sbooks"]
         books = coll.find()
         books_r = []
         for book in books:
@@ -91,8 +90,10 @@ class GetHandler(BaseHandler):
 
 
 class DeleteHandler(BaseHandler):
-    def get(self, isbn):
+    def get(self):
         coll = self.db[options.coll_books]
+
+        isbn = self.get_argument(isbn)
         if not isbn:
             no_isbn = {
                 "errmsg": "no_isbn",
