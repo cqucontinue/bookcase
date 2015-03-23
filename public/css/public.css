@@ -9,7 +9,7 @@ button:focus {
     work for login.html
 ***********************************************/
 #login-page {
-    background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAQDAwMDAwQDAwQFBAMEBQcFBAQFBwgGBgcGBggKCAgICAgICggKCgsKCggNDQ4ODQ0SEhISEhQUFBQUFBQUFBT/2wBDAQUFBQgHCA8KCg8SDwwPEhYVFRUVFhYUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABUAFIDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAJRAAAQIFBAEFAAAAAAAAAAAAAAIDAQQSNFNzkrHSERQiQlFi/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AN/AAJJuXNNHKwKgAAACSblzTRysCoAAAAASTcuaaOVgVAAAAEk3LmmjlYFQAACVMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AUzORvZHuBKEJj1C/ejzQj4R+1foCtMzkb2R7gKZnI3sj3AUzORvZHuBUABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAAAEk3LmmjlYFQAAABJNy5po5WBUAAAAAJJuXNNHKwKgAAACSblzTRysCoAABKmZyN7I9wFMzkb2R7gShCY9Qv3o80I+EftX6ArTM5G9ke4CmZyN7I9wFMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AqAAkm5c00crAqAAAAJJuXNNHKwKgAAAABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAf/9k=') /*../imgs/login-bg.jpg*/;
+    background-image: url('/static/imgs/login-bg.jpg') /*../imgs/login-bg.jpg*/;
     background-repeat: repeat;
 }
 
@@ -87,7 +87,7 @@ button:focus {
 #donate-page {
     font-family: 'Microsoft JhengHei';
     margin: 0;
-    background-image: url(/imgs/donate_bg.jpg);
+    background-image: url(/static/imgs/donate_bg.jpg);
 }
 
 #public-head {
@@ -146,7 +146,7 @@ button:focus {
     /*position: relative;*/
     width: 100%;
     height: 500px;
-    background-image: url(/imgs/donate_title.jpg);
+    background-image: url(/static/imgs/donate_title.jpg);
 }
 
 #donate-content #search-box {

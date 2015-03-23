@@ -12,7 +12,6 @@ switch (pageTitle) {
     case 'Continue-donate':
         handleDonatePage();
         break;
-        
 }
 
 //
@@ -49,6 +48,7 @@ function handleLoginPage() {
         }
 
         xhr.open('post', '/auth/login', true);
+        xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
         xhr.send(fd);
 
     }
@@ -103,7 +103,7 @@ function handleDonatePage() {
 
     donateSubmit.onclick = function () {
         if (!bookInf.isbn) {
-            alert("请输入所捐书籍的ISBN");
+            alert("请正确输入所捐书籍的ISBN");
             return;
         } else {
             var xhr = new XMLHttpRequest();
@@ -132,6 +132,7 @@ function handleDonatePage() {
 
             //Object.toString(bookInf)
             xhr.open('post', '/book/edit', true);
+            xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
             //alert(bookInf.isbn)
             xhr.send(data);
             //
