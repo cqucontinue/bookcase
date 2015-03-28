@@ -128,6 +128,7 @@ function handleDonatePage() {
             data.append('publisher', bookInf.publisher);
             data.append('pub_date', bookInf.pubDate);
             data.append('image', bookInf.image);
+            data.append('tags', bookInf.tags);
             data.append('donor', bookInf.donor);
 
             //Object.toString(bookInf)
@@ -171,6 +172,7 @@ function reflashBookInf (json) {
         bookInf.publisher = json.publisher;
         bookInf.pubDate   = json.pubdate;
         bookInf.image     = json.images.large;
+        bookInf.tags      = json.tags;
 
         bookInf.donor = SubCookieUtil.get("identify", "userId");
     }
