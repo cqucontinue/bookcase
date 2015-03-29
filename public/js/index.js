@@ -87,7 +87,7 @@ function handleDonatePage() {
                 type: 'GET',
                 async: false,
                 dataType: 'jsonp',
-                jsonp: "callback",
+                jsonp: 'callback',
                 success: function (json) {
                     reflashBookInf(json)
                 },

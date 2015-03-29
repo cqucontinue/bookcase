@@ -1,11 +1,49 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-  <title></title>
+  <title>Continue-wunderlist</title>
   <link rel="stylesheet" href="css/public.css" />
 </head>
-<body id="donate-content">
+<body id="wunderlist-page">
+  <header id="public-head">
+    <div id="header-content">
+      <img id="logo" src="/static/imgs/donate-logo.png" />
+      <nav id="public-nav">
+        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="javascript:;" target="_self">DONATE</a>|<a class="wonderlist" href="javascript:;" target="_self">WONDUWELIST</a>
+      </nav>
+      <div id="personal-inf"></div>
+    </div>
+  </header>
+  <content id="wunderlist-content">
+    <div id="title"></div>
+    <div id="choose-order-block">
+      <span id="choose-order">
+        排序：
+        <a href="javascript:;" id="time-order">&nbsp;最新添加</a>
+        <a href="javascript:;" id="pop-order">&nbsp;人气最高 </a>
+      </span>
+    </div>
+    <div id="wunder-list">
+      <div class="book-inf">
+        <img class="cover" />
+        <div class="details">
+          <span class="title inf">书名： <span></span></span>
+          <span class="author inf">作者： <span></span></span>
+          <span class="publisher inf">出版社： <span></span></span>
+          <span class="publish-time inf">出版时间： <span></span></span>
+          <span class="isbn inf">ISBN： <span></span></span>
+          <a class="get-more" href="javascript:;" target="_blank">了解更多</a>
+        </div>
+        <div class="other-inf">
+          <span class="create-time inf">添加时间： <span></span></span>
+          <span class="want-too inf"><span>我也想看： </span><img class="want-ico" src="/static/imgs/want-icon.png" /></span>
+          <span class="want-too-list inf">张世宝、陈敏、米文卓等人也想看</span>
+        </div>
+      </div>
+    </div>
+  </content>
   <button id="test"></button>
+  <div id="content"></div>
   <script src="static/js/wunderlist.js"></script>
 </body>
 </html>

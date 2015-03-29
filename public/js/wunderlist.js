@@ -2,6 +2,7 @@
 var wunderlistArray = [];
 
 function Wunderlist() {
+    // create a new node
     var bookInfNode = document.createElement('div');
     bookInfNode.className = "book-inf";
 
@@ -9,73 +10,205 @@ function Wunderlist() {
     bookInfNode.innerHTML = detailHTML;
 
     // infmation
-    this.coverURL = "";
+    this.image = "";
     this.title = "";
     this.author = "";
-    this.publiser = "";
-    this.publishTime = "";
+    this.publisher = "";
+    this.pubDate = "";
     this.isbn = "";
-    this.getMore = "";
+    this.alt = "";
     this.createTime = "";
+    this.tags = [];
+
     this.node = bookInfNode;
 }
 
 Wunderlist.prototype.show = function () {
     
-    this.node.getElementsByClassName('cover')[0].setAttribute("src", this.coverURL);
-    this.node.getElementsByClassName('get-more')[0].setAttribute("href", this.getMore);
+    // basic node
+    this.node.getElementsByClassName('cover')[0].setAttribute("src", this.image);
+    this.node.getElementsByClassName('get-more')[0].setAttribute("href", this.alt);
 
     this.node.getElementsByClassName('title')[0].lastChild.innerText
         = this.title;
     this.node.getElementsByClassName('author')[0].lastChild.innerText
         = this.author;
     this.node.getElementsByClassName('publisher')[0].lastChild.innerText
-        = this.publiser;
+        = this.publisher;
     this.node.getElementsByClassName('publish-time')[0].lastChild.innerText
-        = this.publishTime;
+        = this.pubDate;
     this.node.getElementsByClassName('isbn')[0].lastChild.innerText
         = this.isbn;
 
+    // specail node
+    this.handleSpecialNode();
+
     // show
-    document.getElementsByTagName('body')[0].appendChild(this.node);
+    document.getElementById('content').appendChild(this.node);
 
 }
 
+//
+// There have some special node in diffrent page
+//
+Wunderlist.prototype.handleSpecialNode = function () {
+    var objWunder = this;
 
+    // if the page is add-wunderlist.html
+    if (pageTitle == 'Continue-add-wunderlist') {
+        // create a botton
+        var button = document.createElement('button');
+        button.innerText = '添加入愿望清单';
+        button.className = 'submit-wunder';
 
+        // add Listen to this button
+        button.onclick = function () {
+            submitWunder(objWunder);
+        };
 
-var test = document.getElementById('test');
+        // append this node
+        this.node.appendChild(button);
+    }
 
-test.onclick = function () {
+    // if the page is wunderlist.html
+    if (pageTitle == 'Continue-wunderlist') {
 
+    }
+}
+
+function submitWunder(objWunder) {
+    //alert(objWunder.isbn);
     var xhr = new XMLHttpRequest();
 
     xhr.onload = function () {
         var res = JSON.parse(xhr.responseText);
-        handleWunderlist(res);
+
+        if (res.errcode && res.errcode == 1) {
+            alert('Something wrong! Try again later');
+        } else {
+            alert('Success!');
+        }
     }
 
-    xhr.open('get', '/wunderlist/get', true);
-    xhr.send();
+    // the data
+    var data = new FormData();
+    
+    data.append('isbn', objWunder.isbn);
+    data.append('title', objWunder.title);
+    data.append('alt', objWunder.alt);
+    data.append('author', objWunder.author);
+    data.append('publisher', objWunder.publisher);
+    data.append('pub_date', objWunder.pubDate);
+    data.append('image', objWunder.image);
+    data.append('tags', objWunder.tags);
+
+    xhr.open('post', '/wunderlist/edit', true);
+    xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
+    xhr.send(data);
 }
 
-function handleWunderlist(res) {
+function showWunderlist(res) {
+
+    // if something wrong
+    if (res.msg && res.msg == 'book_not_found') {
+        alert("Something wrong!");
+        return;
+    }
+
+    //if (res instanceof Object) {
+    //    res = res.books;
+    //}
+    if (pageTitle == 'Continue-add-wunderlist') {
+        res = res.books;
+    }
+
     // the number of wunderlist
     var count = res.length;
-    console.log(count);
     for (var i = 0; i < count; ++i) {
         var temp = new Wunderlist();
-        temp.coverURL = res[i].image;
+        temp.image = res[i].image;
         temp.title = res[i].title;
-        temp.author = res[i].author[0];
-        temp.publiser = res[i].publiser;
-        temp.publishTime = res[i].pub_date;
-        temp.getMore = res[i].alt;
-        temp.createTime = res[i].create_at;
+        temp.author = res[i].author; // TODO: author is a array
+        temp.publisher = res[i].publisher;
+        temp.pubDate = res[i].pub_date || res[i].pubdate;
+        temp.alt = res[i].alt;
+        temp.createTime = res[i].create_at || '';
+        temp.isbn = res[i].isbn13 || res[i].isbn;
+        temp.tags = res[i].tags;
 
         // show
         temp.show();
-        
     }
-    alert(detailHTML);
+}
+
+// start
+//
+// choose which part of js code execute
+//
+var pageTitle = document.title;
+
+switch (pageTitle) {
+    case 'Continue-wunderlist':
+        handleWunderlistShow();
+        break;
+    case 'Continue-add-wunderlist':
+        handleWunderlistAdd();
+        break;
+}
+
+function handleWunderlistShow() {
+    var test = document.getElementById('test');
+
+    test.onclick = function () {
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            var res = JSON.parse(xhr.responseText);
+            showWunderlist(res);
+        }
+
+        xhr.open('get', '/wunderlist/get', true);
+        xhr.send();
+    }
+}
+
+function handleWunderlistAdd() {
+    var isbnBox = document.getElementById('search');
+
+    isbnBox.onfocus = function () {
+        // lister to Enter when focus on search-box 
+        this.onkeydown = function (event) {
+            var e = event || window.event;
+
+            // if not Enter key, return
+            if (e && e.keyCode != 13) return;
+
+            // remove all node that searched just now
+            var father = document.getElementById('content');
+            var childen = father.childNodes;
+            for (var i = 0; i < childen.length; ++i) {
+                father.removeChild(childen[0]);  // there have some problem
+            }
+
+            var isbnCode = isbnBox.value;
+
+            var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=5';
+
+            // CROS
+            $.ajax({
+                url: url,
+                type: 'GET',
+                async: false,
+                dataType: 'jsonp',
+                jsonp: 'callback',
+                success: function (json) {
+                    showWunderlist(json)
+                },
+                error: function () {
+                    alert('fail');
+                }
+            });
+        }
+    }
 }
