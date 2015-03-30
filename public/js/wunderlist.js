@@ -44,7 +44,8 @@ Wunderlist.prototype.show = function () {
     this.handleSpecialNode();
 
     // show
-    document.getElementById('content').appendChild(this.node);
+    document.getElementById('wunder-list').appendChild(this.node);
+    //document.getElementById('content').appendChild(this.node);
 
 }
 
@@ -73,9 +74,31 @@ Wunderlist.prototype.handleSpecialNode = function () {
     // if the page is wunderlist.html
     if (pageTitle == 'Continue-wunderlist') {
 
+        var otherInf = document.createElement('div');
+        otherInf.className = 'other-inf';
+
+        var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span><span class="want-too-list inf">张世宝、陈敏、米文卓等人也想看</span>'
+        otherInf.innerHTML = otherInfHTML;
+
+        // insert HTML
+        this.node.appendChild(otherInf);
+
+        // listen to LIKE event
+        var butLike = document.createElement('img');
+        butLike.className = 'want-ico';
+        butLike.src = '/static/imgs/want-icon.png';
+
+        otherInf.getElementsByClassName('want-too')[0].appendChild(butLike);
+
+        butLike.onclick = function () {
+            submitVote(objWunder);
+        }
     }
 }
 
+//
+// when want to add a book to wunderlist
+//
 function submitWunder(objWunder) {
     //alert(objWunder.isbn);
     var xhr = new XMLHttpRequest();
@@ -105,6 +128,31 @@ function submitWunder(objWunder) {
     xhr.open('post', '/wunderlist/edit', true);
     xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
     xhr.send(data);
+}
+
+//
+// vote to some boos
+//
+function submitVote(objBook) {
+    alert(objBook.isbn);
+    var xhr = new XMLHttpRequest()
+    var url = '/wunderlist/vote?isbn=' + objBook.isbn;
+
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.responseText);
+
+        // if something wrong
+        if (res.errcode && res.errcode == 1) {
+            alert('There has somethinf wrong! Please try agian later!');
+        } else {
+            alert('Vote successful!');
+            // TODO
+        }
+    }
+    xhr.onerror = function () { alert('err!');}
+
+    xhr.open('get', url, true);
+    xhr.send();
 }
 
 function showWunderlist(res) {
@@ -149,17 +197,21 @@ var pageTitle = document.title;
 
 switch (pageTitle) {
     case 'Continue-wunderlist':
-        handleWunderlistShow();
+        handleWunderlistPage();
         break;
     case 'Continue-add-wunderlist':
         handleWunderlistAdd();
         break;
 }
 
-function handleWunderlistShow() {
-    var test = document.getElementById('test');
+function handleWunderlistPage() {
+    document.onreadystatechange = function () {
 
-    test.onclick = function () {
+        // change the style of nav
+        var publicNav = document.getElementById('public-nav');
+        publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
+        publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
+        publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
 
         var xhr = new XMLHttpRequest();
 

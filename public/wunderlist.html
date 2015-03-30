@@ -9,7 +9,7 @@
     <div id="header-content">
       <img id="logo" src="/static/imgs/donate-logo.png" />
       <nav id="public-nav">
-        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="javascript:;" target="_self">DONATE</a>|<a class="wonderlist" href="javascript:;" target="_self">WONDUWELIST</a>
+        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="donate.html" target="_self">DONATE</a>|<a class="wonderlist" href="wunderlist.html" target="_self">WONDUWELIST</a>
       </nav>
       <div id="personal-inf"></div>
     </div>
@@ -22,9 +22,10 @@
         <a href="javascript:;" id="time-order">&nbsp;最新添加</a>
         <a href="javascript:;" id="pop-order">&nbsp;人气最高 </a>
       </span>
+      <a href="javascript:;" id="my-wunderlist">查看我的愿望清单</a>
     </div>
     <div id="wunder-list">
-      <div class="book-inf">
+      <!--<div class="book-inf">
         <img class="cover" />
         <div class="details">
           <span class="title inf">书名： <span></span></span>
@@ -39,11 +40,18 @@
           <span class="want-too inf"><span>我也想看： </span><img class="want-ico" src="/static/imgs/want-icon.png" /></span>
           <span class="want-too-list inf">张世宝、陈敏、米文卓等人也想看</span>
         </div>
-      </div>
+      </div>-->
+    </div>
+    <div class="page-turning-block">
+      <ul>
+        <li class="last-page">尾页</li>
+        <li class="next-page">下一页&gt;</li>
+        <li class="curr-page-inf"><span class="curr">1</span> / <span class="total">20</span></li>
+        <li class="pre-page">&lt;上一页</li>
+        <li class="first-page">首页</li>
+      </ul>
     </div>
   </content>
-  <button id="test"></button>
-  <div id="content"></div>
   <script src="static/js/wunderlist.js"></script>
 </body>
 </html>
