@@ -25,7 +25,7 @@
       <a href="javascript:;" id="my-wunderlist">查看我的愿望清单</a>
     </div>
     <div id="wunder-list">
-      <!--<div class="book-inf">  
+      <!--<div class="book-inf">
         <img class="cover" />
         <div class="details">
           <span class="title inf">书名： <span></span></span>
@@ -52,6 +52,25 @@
       </ul>
     </div>
   </content>
+
+  <content id="add-wunderlist-content">
+    <div id="head-wrap">
+      <span>添加入愿望清单</span>
+    </div>
+    <div id="content-wrap">
+      <span class="tips">在下面输入相关信息，已添加书目到愿望清单</span>
+      书名或isbn:
+      <div class="search-wrap">
+        <input type="text" value="" id="add-wunder-search" />
+        <div class="err-tip">
+          <img src="/imgs/err-ico.jpg" alt="" class="err-ico" />
+          <span id="err-message">此本书在愿望清单中已存在，返回并查看</span>
+        </div>
+      </div>
+    </div>
+
+  </content>
+
   <script src="static/js/wunderlist.js"></script>
 </body>
 </html>
