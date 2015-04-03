@@ -8,7 +8,7 @@ from lib.auth import (AuthHandler, LoginHandler,
                       LogoutHandler, RegisterHandler,
                       NologinHandler)
 from lib.wunderlist import (WunEditHandler, GetWunBooksHandler,
-                            WunSearchHandler, VoteHandler)
+                            VoteHandler)
 from lib.search import SearchHandler
 from lib import superuuid
 # Public module
@@ -47,7 +47,6 @@ class Application(tornado.web.Application):
             (r"/auth/logout", LogoutHandler),
             (r"/auth/register", RegisterHandler),
             (r"/wunderlist/get", GetWunBooksHandler),
-            (r"/wunderlist/search", WunSearchHandler),
             (r"/wunderlist/edit", WunEditHandler),
             (r"/wunderlist/vote", VoteHandler)
             # Add new Handler HERE

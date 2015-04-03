@@ -111,8 +111,8 @@ class LogoutHandler(BaseHandler):
 
 class RegisterHandler(BaseHandler):
     def post(self):
-        member_fields = ["member_id", "password", "fullname", "url_token",
-                         "password_hash", "avatar_path"]
+        member_fields = ["member_id", "password", "fullname",
+                         "url_token", "password_hash", "avatar_path"]
 
         member_id = self.get_argument("member_id", None)
         password = self.get_argument("password", None)

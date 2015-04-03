@@ -19,12 +19,10 @@ class BaseHandler(tornado.web.RequestHandler):
         # This cannot use DEFINE options
         # TODO
         coll = self.db.members   # Connect to members' collection
-        member = coll.find_one({"_id": member_id})
+        member = coll.find_one({"_id": member_id}, 
+                               {"_id": 0,
+                                "password": 0,
+                                "password_hash": 0})
         member["member_id"] = member_id
-        # Delete _id
-        del member["_id"]
-        # Delete password in user info
-        del member["password"]
-        del member["password_hash"]
         # return dumps(user)
         return member

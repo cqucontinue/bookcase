@@ -40,11 +40,56 @@ class Application(tornado.web.Application):
 
 class GetWunBooksHandler(BaseHandler):
     def get(self):
+        page = self.get_argument("page", None)
+        # pmax = [1, 20]
+        pmax = self.get_argument("pmax", 6)
+        pmax = int(pmax)
+        sort = self.get_argument("sort", None)
+        
+        if not page:
+            no_page = {
+                "errmsg": "no_page",
+                "errcode": 1
+            }
+            self.write(no_page)
+            return
+        else:
+            page = int(page)
+        
+        if pmax not in range(1, 20):
+            invalid_pmax = {
+                "errmsg": "invalid_pmax",
+                "errcode": 1
+            }
+            self.write(invalid_pmax)
+            return 
+
+        if not sort:
+            no_sort = {
+                "errmsg": "no_sort",
+                "errcode": 1
+            }
+            self.write(no_sort)
+            return
+
+        sort_fields = ["vote_count", "created_at", "updated_at"]
+        if sort not in sort_fields:
+            no_sort_field = {
+                "errmsg" : "no_sort_field",
+                "errcode": 1
+            }
+            self.write(no_sort_field)
+            return
+        
+        # Connect to collection - wunbooks  
         coll = self.db[options.coll_wunder]
-        books = coll.find()
+        # Descending sort
+        cursor = coll.find({}, {"_id": 0}).sort((sort, pymongo.DESCENDING))
+
+        bindex = pmax * (page-1)
+        ncursor = cursor[bindex:(bindex + pmax)]
         books_r = []
-        for book in books:
-            del book["_id"]
+        for book in ncursor:
             books_r.append(book)
         self.write(json.dumps(books_r))
 
@@ -100,11 +145,33 @@ class WunEditHandler(BaseHandler):
             self.write(no_isbn)
             return
 
+        # Check the book if existed in wunderlist | bookcase
+        # Return error message if the book exists
+        coll = self.db[options.coll_books]
+        coll_w = self.db[options.coll_wunder]
+
+        book_in_books = coll.find_one({"isbn": isbn})
+        book_in_wbooks = coll_w.find_one({"isbn": isbn})
+
+        if book_in_books is not None:
+            book_got = {
+                "errcode": 1,
+                "errmsg": "book_got"
+            }
+            self.write(book_got)
+            return
+
+        if book_in_wbooks is not None:
+            book_exist = {
+                "errcode": 1,
+                "errmsg": "book_exist"
+            }
+            self.write(book_exist)
+            return
+
+        # Insert new book into wunderlist
         book_fields = ["isbn", "title", "alt", "author",
-                       "publisher", "image", "tags",
-                       "pub_date"]
-        # Wunder list database
-        coll = self.db[options.coll_wunder]
+                       "publisher", "image", "tags", "pub_date"]
         if isbn:
             wunbook = {}
             wunbook["voter"] = []

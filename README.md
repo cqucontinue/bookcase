@@ -12,33 +12,58 @@ U can ssh continue@IP to update code and test your new feature
 ```json
 mongodb:
     - database: cotinue
-        - collections: contact, members, info, books
+        - collections: members, books, wunbooks
 
 members {
-    "_id": member_id    // NOT NULL
-    "fullname": string, // DEFAULT NULL
-    "nickname": string, // DEFAULT NULL
-    "password": string, // NOT NULL
-    "password_hash": string, // DEFAULT NULL
+    "_id": member_id,        // NOT NULL
+    "fullname": string,      // DEFAULT NULL
+    "password": string,      // DEFAULT NULL
+    "password_hash": string, // NOT NULL
     "url_token": string,     // DEFAULT NULL
     "avatar_path": string,   // DEFAULT NULL
     "created": string,       // NOT NULL
-    "last_updated": string   // NOT NULL
+    "last_updated": string,  // NOT NULL
+
+    "contact": {
+        "email": string,        // NULL
+        "phone": string         // NULL
+        // More can add here
+    },
+
+    "info": {
+        "grade": string,            // DEFAULT NULL
+        "gender": string,           // DEFAULT NULL
+        "school": string,           // DEFAULT NULL
+        "self_introduction": string // DEFAULT NULL
+    }
 }
 
-contact {
-    "_id": member_id,   // NOT NULL
-    "email": string,    // NULL
-    "phone": string     // NULL
-    // More can add here
+books {
+    title: 标题, string
+    alt: 豆瓣链接, string
+    author: 作者, array, []
+    publisher: 出版社, array
+    image: 豆瓣图片链接, string
+    tags: array, []
+    isdonated: true or false, if true then set owner to "113"
+    donor: 捐赠人, array
+    pub_date: 出版时间, string
+    updated_at: string,
+    created_at: string
 }
 
-info {
-    "_id": member_id, // NOT NULL,
-    "grade": string,  // DEFAULT NULL,
-    "gender": string, // DEFAULT NULL,
-    "school": string, // DEFAULT NULL,
-    "self_introduction": string  // DEFAULT NULL
+wunbooks {
+    title: string,
+    alt: 豆瓣链接, string
+    author: array,
+    publisher: 出版社, string
+    image: 豆瓣图片链接, string
+    tags: 标签, array
+    pub_date: 出版时间, string
+    created_at: string,
+    updated_at: string,
+    voter: [member_id, ...],
+    vote_count: int
 }
 ```
 
@@ -54,7 +79,7 @@ HTTP Method:
 Data type: JSON
 Time format: yyyy-MM-dd HH:mm:ss, "2015-02-16 01:58:00"
 ```
-额外
+
 ####Edit book information
 >equal to insert + update
 
@@ -76,7 +101,7 @@ optional:
     image: 豆瓣图片链接, string
     tags: array, []
     isdonated: true or false, if true then set owner to "113"
-    donor: 捐赠人, object in array
+    donor: 捐赠人, array
     pub_date: 出版时间, string
     
 return:
@@ -208,26 +233,6 @@ return:
     ]
 ```
 
-####Search book in wunder list via isbn
-```json
-method: GET
-
-uri: /wunderlist/search?isbn=isbn_code
-Ex: /wunderlist/search?isbn=1234567890123
-
-return:
-    errmsg: "no_isbn",
-    errcode: 1
-    // 已购买
-    errcode: 1,
-    errmsg: "book_got"
-    // 已存在在清单里
-    errcode: 1,
-    errmsg: "book_exist"
-    // 成功
-    errcode 0
-```
-
 ####Insert book in wunder list
 ```json
 method: POST
@@ -247,6 +252,18 @@ optional:
     image: 豆瓣图片链接,
     tags: 标签,
     pub_date: 出版时间
+
+return:
+    errmsg: "no_isbn",
+    errcode: 1
+    // 已购买
+    errcode: 1,
+    errmsg: "book_got"
+    // 已存在在清单里
+    errcode: 1,
+    errmsg: "book_exist"
+    // 成功
+    errcode 0
 ```
 
 ####Vote in wunder list
