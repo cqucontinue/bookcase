@@ -1,6 +1,36 @@
 ﻿
-var boolAddWunder = false;
-var wunderlistArray = [];
+
+var boolAddWunder = false; // use to mark wheather add-wunderlist-block is 'block'
+var currPage = 1; // use to mark curr page
+var allPages = 1; // use to mark total count of pages
+var sortWay = 'updated_at'; // the wunderlist's sort way, default is based on update time
+
+
+//
+// listetn to sort way
+//
+var timeOrder = document.getElementById('time-order');
+var popOrder = document.getElementById('pop-order');
+
+timeOrder.onclick = function () {
+
+    // change the style of order-block
+    timeOrder.style.color = '#528BB8'; // focus on time-order
+    popOrder.style.color = '#A0A0A0';
+
+    sortWay = 'updated_at';
+    listenTurnOpetation(sortWay);
+}
+
+popOrder.onclick = function () {
+
+    // change the style of order-block
+    popOrder.style.color = '#528BB8'; // focus on pop-order
+    timeOrder.style.color = '#A0A0A0';
+
+    sortWay = 'vote_count';
+    listenTurnOpetation(sortWay);
+}
 
 function Wunderlist() {
     // create a new node
@@ -20,6 +50,9 @@ function Wunderlist() {
     this.alt = "";
     this.createTime = "";
     this.tags = [];
+
+    this.voteCount = 0;
+    this.voter = [];
 
     this.node = bookInfNode;
 }
@@ -79,22 +112,52 @@ Wunderlist.prototype.handleSpecialNode = function () {
         var otherInf = document.createElement('div');
         otherInf.className = 'other-inf';
 
-        var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span><span class="want-too-list inf">张世宝、陈敏、米文卓等人也想看</span>'
+        var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span>';
         otherInf.innerHTML = otherInfHTML;
 
         // insert HTML
         this.node.appendChild(otherInf);
 
-        // listen to LIKE event
+        // add like botton
         var butLike = document.createElement('img');
         butLike.className = 'want-ico';
         butLike.src = '/static/imgs/want-icon.png';
-
-        otherInf.getElementsByClassName('want-too')[0].appendChild(butLike);
-
+        // listen to LIKE event
         butLike.onclick = function () {
             submitVote(objWunder);
         }
+
+        otherInf.getElementsByClassName('want-too')[0].appendChild(butLike);
+
+        // add vote count
+        var voteCount = document.createElement('span');
+        voteCount.className = 'vote-count';
+        voteCount.innerText = this.voteCount || '';
+
+        otherInf.getElementsByClassName('want-too')[0].appendChild(voteCount);
+
+        // add want-too-list
+        var wantList = document.createElement('span');
+        wantList.className = 'want-too-list inf';
+
+        var wantListStr = '';
+        var wantListLength = this.voter.length;
+        for (var i = wantListLength - 1; i >= 0 && (wantListLength - i) <= 3; --i) {
+            wantListStr += this.voter[i].fullname;
+            if ((wantListLength <= 3 && i != 0) || 
+                (wantListLength > 3 && (wantListLength - i) != 3)) {
+                wantListStr += '、';
+            }
+        }
+        if (wantListLength > 3) {
+            wantListStr += '等人也想看';
+        } else {
+            wantListStr += '也想看'
+        }
+        // update the innerText
+        wantList.innerText = wantListStr;
+
+        otherInf.appendChild(wantList);
     }
 }
 
@@ -137,7 +200,7 @@ function submitWunder(objWunder) {
 // vote to some boos
 //
 function submitVote(objBook) {
-    alert(objBook.isbn);
+
     var xhr = new XMLHttpRequest()
     var url = '/wunderlist/vote?isbn=' + objBook.isbn;
 
@@ -146,10 +209,12 @@ function submitVote(objBook) {
 
         // if something wrong
         if (res.errcode && res.errcode == 1) {
-            alert('There has somethinf wrong! Please try agian later!');
+            alert('There has something wrong! Please try agian later!');
         } else {
-            alert('Vote successful!');
-            // TODO
+            //alert('Vote successful!');
+            // refresh the count of vote
+            // TODO: when vote success, upload a new vote-icon
+            objBook.node.getElementsByClassName('vote-count')[0].innerText = ++objBook.voteCount;
         }
     }
     xhr.onerror = function () { alert('err!');}
@@ -165,6 +230,8 @@ function showWunderlist(res) {
         alert("Something wrong!");
         return;
     }
+    // refresh the total pages
+    allPages = res.pages;
 
     //if (pageTitle == 'Continue-add-wunderlist') {
     //    res = res.books;
@@ -183,6 +250,11 @@ function showWunderlist(res) {
         temp.createTime = res[i].create_at || '';
         temp.isbn = res[i].isbn13 || res[i].isbn;
         temp.tags = res[i].tags;
+
+        // if this is for wunderlist part
+        res[i].vote_count && (temp.voteCount = res[i].vote_count);
+        
+        temp.voter = res[i].voter;
 
         // show
         temp.show();
@@ -205,18 +277,26 @@ switch (pageTitle) {
 }
 
 function handleWunderlistPage() {
+    // change the style of nav
+    var publicNav = document.getElementById('public-nav');
+    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
+    publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
+    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
 
-    // click to add wunderlist
+    // listen to add-wunderlist-block occupied
     var addWunder = document.getElementById('my-wunderlist');
     addWunder.onclick = function () {
         var addWunderCotent = document.getElementById('add-wunderlist-content');
         addWunderCotent.style.display = 'block';
 
+        // clean
+        cleanAllChilden(document.getElementById('show-block'));
+
         boolAddWunder = true;
         // listen to handleWunderlistAdd
         handleWunderlistAdd();
 
-        // shot down add wunderlist
+        // listen to shot down add wunderlist
         var shotDown = document.getElementById('shot-down-add-wunder');
         shotDown.onclick = function () {
             boolAddWunder = false;
@@ -224,27 +304,14 @@ function handleWunderlistPage() {
         }
     }
 
-    // change the style of nav
-    var publicNav = document.getElementById('public-nav');
-    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
-
-    // send wunderlist require
-    var xhr = new XMLHttpRequest();
-
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
-        showWunderlist(res);
-
-        console.log(res)
-    }
-
-    xhr.open('get', '/wunderlist/get?page=1&sort=vote_count', false);
-    xhr.send();
-
+    // listen to some operator like next, prev
+    listenTurnOpetation(sortWay); // default sortWay = updated_at
 }
 
+
+//
+// add a book to wunderlist
+//
 function handleWunderlistAdd() {
     var isbnBox = document.getElementById('add-wunder-search');
 
@@ -259,12 +326,7 @@ function handleWunderlistAdd() {
 
             // remove all node that searched just now
             var father = document.getElementById('show-block');
-            //father = father.getElementById('show-block');
-            var childen = father.childNodes;
-            var childenLength = childen.length;
-            for (var i = 0; i < childenLength; ++i) {
-                father.removeChild(childen[0]);  // there have some problem
-            }
+            cleanAllChilden(father);
 
             var isbnCode = isbnBox.value;
 
@@ -286,4 +348,106 @@ function handleWunderlistAdd() {
             });
         }
     }
+}
+
+
+//
+// get books form wunderlist
+//
+function getWunderlist(turnedPage, sort) {
+    // send wunderlist require
+    var xhr = new XMLHttpRequest();
+    var url = '/wunderlist/get?' + 'page=' + turnedPage
+        + '&' + 'sort=' + sort;
+
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.responseText);
+        showWunderlist(res);
+    }
+
+    xhr.open('get', url, false); // synchronous
+    xhr.send();
+}
+
+
+//
+// listen to smoe operation, just like next page
+//
+function listenTurnOpetation(_sortWay) {
+
+    // clean page
+    cleanAllChilden(document.getElementById('wunder-list')); 
+    // get the first page of wunderlist
+    getWunderlist(1, _sortWay);
+    // uppdate
+    updatePages();
+
+    // next page
+    var nextPage = document.getElementById('wunderlist-content')
+        .getElementsByClassName('next-page')[0];
+    nextPage.onclick = function () {
+        if (currPage == allPages) {
+            alert('This is the last page!');
+            return;
+        }
+        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        getWunderlist(++currPage, _sortWay);
+        updatePages();
+    }
+
+    // prev page
+    var prePage = document.getElementById('wunderlist-content')
+        .getElementsByClassName('pre-page')[0];
+    prePage.onclick = function () {
+        if (currPage == 1) {
+            alert('This is the first page!');
+            return;
+        }
+        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        getWunderlist(--currPage, _sortWay);
+        updatePages();
+    }
+
+    // first page
+    var firstPage = document.getElementById('wunderlist-content')
+        .getElementsByClassName('first-page')[0];
+    firstPage.onclick = function () {
+        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        currPage = 1;
+        getWunderlist(currPage, _sortWay);
+        updatePages();
+    }
+
+    // last page
+    var lastPage = document.getElementById('wunderlist-content')
+        .getElementsByClassName('last-page')[0];
+    lastPage.onclick = function () {
+        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        currPage = allPages;
+        getWunderlist(currPage, _sortWay);
+        updatePages();
+    }
+    
+}
+
+//
+// clean all of childen under the node
+//
+function cleanAllChilden(father) {
+    var childen = father.childNodes;
+    var childenLength = childen.length;
+    for (var i = 0; i < childenLength; ++i) {
+        father.removeChild(childen[0]);  // there have some problem
+    }
+}
+
+//
+// update the count of curr page and total page
+//
+function updatePages() {
+    var curr = document.getElementById('wunderlist-content').getElementsByClassName('curr')[0];
+    curr.innerText = currPage;
+
+    var total = document.getElementById('wunderlist-content').getElementsByClassName('total')[0];
+    total.innerText = allPages;
 }

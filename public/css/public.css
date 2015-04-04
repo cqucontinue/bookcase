@@ -356,13 +356,15 @@ a {
 }
 
 #wunderlist-page .book-inf .details .isbn,
-#wunderlist-page .book-inf .details .get-more {
+#wunderlist-page .book-inf .details .get-more
+ {
     display: none;
 }
 
+
 #wunderlist-page .book-inf .other-inf {
     width: 202px;
-    margin: 39px 0 0 20px;
+    margin:63px 0 0 20px;
     float: left;
     font-size: 15px;
 }
@@ -375,14 +377,23 @@ a {
     font-size: 15px;
 }
 
+#wunderlist-page .book-inf .other-inf .create-time {
+    display: none;
+}
+
 #wunderlist-page .book-inf .other-inf .want-too-list {
     font-size: 12px;
     color: #A0A0A0;
     margin-bottom: 0;
+    overflow: hidden;
 }
 
 #wunderlist-page .book-inf .other-inf .want-too span {
     float: left;
+}
+
+#wunderlist-page .book-inf .other-inf .want-too .vote-count {
+    margin: 0 6px;
 }
 
 #wunderlist-page .book-inf .other-inf .want-ico {
@@ -391,6 +402,8 @@ a {
     float: left;
     /*display: block;*/
 }
+
+
 
 .page-turning-block {
     height: 19px;
