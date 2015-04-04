@@ -214,23 +214,39 @@ return:
     }
 ```
 
-####Get wunder list
+####Get books in wunderlist - pagination
 ```json
 method: GET
 
-uri: /wunderlist/get
+uri: /wunderlist/get?page=int&pmax=max_books_each_page&sort=sort_method
+Ex: /wunderlist/get?page=1&pmax=8&sort=updated_at
+
 
 return:
-    [
-        {
-            "isbn": "...",
+    {
+        "pages": 3,
+        "page": 1,
+        books: [
+            {
+                "isbn": "...",
+                "created_at": "2015-02-16 00:00:00",
+                "updated_at": "2015-02-16 00:00:00",
+                ...
+                voter: [
+                    {
+                        "member_id": "20xx2323",
+                        ...
+                    }
+                ]
+            }, 
             ...
-            "created_at": "2015-02-16 00:00:00",
-            "updated_at": "2015-02-16 00:00:00",
-            ...
-        },
-        ...
-    ]
+        ]
+    }
+
+    or
+
+    "no_page" | "invalid_pmax" | "no_sort" | "no_sort_field" | "illegal_request"
+
 ```
 
 ####Insert book in wunder list

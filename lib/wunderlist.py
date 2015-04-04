@@ -84,7 +84,7 @@ class GetWunBooksHandler(BaseHandler):
         # Connect to collection - wunbooks  
         coll = self.db[options.coll_wunder]
         # Init wunbooks
-        cursor = coll.find({}, {"_id": 0})
+        cursor = coll.find({}, {"_id": 0, "voter.password": 0, "voter.password_hash": 0})
         cursor.sort([(sort, pymongo.DESCENDING), ("updated_at", pymongo.DESCENDING)])
         pages = cursor.count() / pmax if cursor.count() % pmax is 0 else (cursor.count() / pmax) + 1
 
