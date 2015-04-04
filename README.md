@@ -245,7 +245,7 @@ return:
 
     or
 
-    "no_page" | "invalid_pmax" | "no_sort" | "no_sort_field" | "illegal_request"
+    "no_page" | "invalid_pmax" | "no_sort" | "no_sort_field" | "illegal_request"`
 
 ```
 

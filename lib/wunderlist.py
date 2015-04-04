@@ -9,7 +9,6 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import json
-
 from datetime import datetime
 from tornado.options import define, options
 import pymongo
