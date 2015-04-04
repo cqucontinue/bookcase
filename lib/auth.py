@@ -9,6 +9,7 @@ import tornado.httpserver
 import tornado.ioloop
 import pymongo
 from datetime import datetime
+from passlib.hash import md5_crypt
 
 from tornado.options import define, options
 
@@ -45,7 +46,7 @@ class Application(tornado.web.Application):
                                   options.mongodb_port)
         self.db = conn[options.db_continue]
 
-        
+
 class AuthHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -84,7 +85,8 @@ class LoginHandler(BaseHandler):
             self.write(not_found)
             return
         else:
-            if password != member["password"]:
+            password_hash = member["password_hash"]
+            if not md5_crypt.verify(password, password_hash):
                 login_fail = {
                     "errcode": 1,
                     "errmsg": "login_fail"
@@ -111,8 +113,8 @@ class LogoutHandler(BaseHandler):
 
 class RegisterHandler(BaseHandler):
     def post(self):
-        member_fields = ["member_id", "password", "fullname",
-                         "url_token", "password_hash", "avatar_path"]
+        member_fields = ["member_id", "password", "password_hash",
+                         "fullname", "url_token", "avatar_path"]
 
         member_id = self.get_argument("member_id", None)
         password = self.get_argument("password", None)
@@ -144,11 +146,13 @@ class RegisterHandler(BaseHandler):
                 return
 
             member = {
-                "_id": member_id
+                "_id": member_id,
+                "password_hash": md5_crypt.encrypt(password)
             }
+            del member_fields[member_fields.index("password")]
+            del member_fields[member_fields.index("password_hash")]
+            del member_fields[member_fields.index("member_id")]
             for key in member_fields:
-                if key is "member_id":
-                    continue
                 member[key] = self.get_argument(key, None)
             member["created"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
             member["last_updated"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
