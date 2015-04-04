@@ -42,7 +42,7 @@ class GetWunBooksHandler(BaseHandler):
     def get(self):
         page = self.get_argument("page", None)
         # pmax = [1, 20]
-        pmax = self.get_argument("pmax", 6)
+        pmax = self.get_argument("pmax", 8)
         pmax = int(pmax)
         sort = self.get_argument("sort", None)
         
@@ -83,15 +83,30 @@ class GetWunBooksHandler(BaseHandler):
         
         # Connect to collection - wunbooks  
         coll = self.db[options.coll_wunder]
-        # Descending sort
-        cursor = coll.find({}, {"_id": 0}).sort((sort, pymongo.DESCENDING))
+        # Init wunbooks
+        cursor = coll.find({}, {"_id": 0})
+        cursor.sort([(sort, pymongo.DESCENDING), ("updated_at", pymongo.DESCENDING)])
+        pages = cursor.count() / pmax if cursor.count() % pmax is 0 else (cursor.count() / pmax) + 1
 
-        bindex = pmax * (page-1)
-        ncursor = cursor[bindex:(bindex + pmax)]
-        books_r = []
-        for book in ncursor:
-            books_r.append(book)
-        self.write(json.dumps(books_r))
+        try:
+            bindex = pmax * (page-1)
+            ncursor = cursor[bindex:(bindex + pmax)]
+            books_r = []
+            for book in ncursor:
+                books_r.append(book)
+            books_r_s = {
+                "pages": pages,
+                "page": page,
+                "books": books_r
+            }
+            self.write(json.dumps(books_r_s))
+        except NameError:
+            illegal_request = {
+                "errmsg": "illegal_request",
+                "errcode": 1
+            }
+            self.write(illegal_request)
+            return
 
 
 class WunSearchHandler(BaseHandler):
