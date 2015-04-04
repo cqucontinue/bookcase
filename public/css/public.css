@@ -264,12 +264,13 @@ a {
 }
 
 #wunderlist-content {
+    overflow: hidden;
     display: block;
-    margin:0 calc((100% - 930px)/2) 30px;
+    /*margin:0 calc((100% - 930px)/2) 30px;*/
+    margin: 0 auto;
     width: 930px;
     height: auto;
     background-color: ActiveBorder;
-    float: left;
 }
 
 #wunderlist-page #title {
@@ -316,7 +317,7 @@ a {
     width: 858px;
     height: auto;
     min-height: 237px;
-    max-height: 948px;  /* 237 * 4 */
+    /*max-height: 948px;*/  /* 237 * 4 */
     padding: 0 35px;
     float: left;
     background-color: ActiveBorder;
@@ -442,12 +443,18 @@ a {
     work for add-wunderlist part
 ************************************************/
 #add-wunderlist-content {
+    display: none;
+    position: fixed;
     position: absolute;
+    min-width: 930px;
     width: 100%;
-    height: 400px;
+    min-height: 400px;
     background-color: rgb(255, 255, 255);
-    top: 300px;
+    top: 0;
     left: 0;
+    margin-bottom: 50px;
+
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
 }
 
 #add-wunderlist-content #head-wrap {
@@ -456,7 +463,7 @@ a {
     background-color: rgb(65, 131, 179);
 }
 #add-wunderlist-content #head-wrap span {
-    width: 930px;
+    width: 800px;
     height: 100%;
     margin: 0 auto;
     color: rgb(255, 255, 255);
@@ -467,7 +474,7 @@ a {
 
 #add-wunderlist-content #content-wrap {
     height: auto;
-    width: 930px;
+    width: 800px;
     margin: 0 auto;
     font-size: 15px;
 }
@@ -499,6 +506,7 @@ a {
 }
 
 #add-wunderlist-content .err-tip {
+    display: none;
     margin: 2.5px 15px;
     float: left;
 }
@@ -508,9 +516,82 @@ a {
     width: 17px;
 }
 #add-wunderlist-content #err-message {
+    
     float: left;
     color: red;
     font-size: 14px;
     line-height: 17px;
     margin: 0 5px;
+}
+
+#add-wunderlist-content #content-wrap #shot-down-add-wunder {
+    display: block;
+    width: 70px;
+    height: 22px;
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 3px;
+    background-color: rgb(59, 149, 245);
+    margin-right: 28px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    border: none;
+    float: right;
+}
+
+#add-wunderlist-content #show-block {
+    /*display: none;*/
+    overflow: hidden;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100px;
+    /*max-height: 300px;*/
+    /*overflow-x: scroll;*/
+    margin: 30px -11px 0 -11px;
+}
+
+
+#add-wunderlist-content #content-wrap .book-inf {
+    width: 137px;
+    height: auto; /* 147px*/
+    margin: 0 11px;
+
+    /*border: 1px solid red;*/
+}
+
+#add-wunderlist-content #content-wrap .book-inf .submit-add-wunder {
+    cursor: pointer;
+    background-color: rgb(59, 149, 245);
+    border: none;
+    color: #fff;
+}
+
+#add-wunderlist-content #content-wrap .book-inf .other-inf {
+    display: none;
+}
+
+#add-wunderlist-content #content-wrap .book-inf .cover {
+    width: 135px;
+    height: 198px;
+}
+#add-wunderlist-content #content-wrap .book-inf .details {
+    margin: 5px 0;
+    font-size: 12px;
+    width: 100%;
+    height: 137px;
+    /*height: auto;*/
+}
+#add-wunderlist-content #content-wrap .book-inf .details .inf {
+    overflow: visible;
+    margin-bottom: 3px;
+    max-height: 32px;
+    overflow: hidden;
+    height: auto;
+}
+#add-wunderlist-content #content-wrap .book-inf .details .publish-time,
+#add-wunderlist-content #content-wrap .book-inf .details .isbn,
+#add-wunderlist-content #content-wrap .book-inf .details .get-more {
+    display: none;
 }

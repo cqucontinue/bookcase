@@ -1,4 +1,5 @@
 ﻿
+var boolAddWunder = false;
 var wunderlistArray = [];
 
 function Wunderlist() {
@@ -44,8 +45,8 @@ Wunderlist.prototype.show = function () {
     this.handleSpecialNode();
 
     // show
-    document.getElementById('wunder-list').appendChild(this.node);
-    //document.getElementById('content').appendChild(this.node);
+    !boolAddWunder && document.getElementById('wunder-list').appendChild(this.node);
+    boolAddWunder && document.getElementById('show-block').appendChild(this.node);
 
 }
 
@@ -56,11 +57,11 @@ Wunderlist.prototype.handleSpecialNode = function () {
     var objWunder = this;
 
     // if the page is add-wunderlist.html
-    if (pageTitle == 'Continue-add-wunderlist') {
+    if (boolAddWunder == true) {
         // create a botton
         var button = document.createElement('button');
-        button.innerText = '添加入愿望清单';
-        button.className = 'submit-wunder';
+        button.innerText = ' + 添加 ';
+        button.className = 'submit-add-wunder';
 
         // add Listen to this button
         button.onclick = function () {
@@ -68,7 +69,8 @@ Wunderlist.prototype.handleSpecialNode = function () {
         };
 
         // append this node
-        this.node.appendChild(button);
+        //this.node.appendChild(button);
+        this.node.insertBefore(button, this.node.firstChild);
     }
 
     // if the page is wunderlist.html
@@ -108,6 +110,7 @@ function submitWunder(objWunder) {
 
         if (res.errcode && res.errcode == 1) {
             alert('Something wrong! Try again later');
+            alert(res.errmsg);
         } else {
             alert('Success!');
         }
@@ -158,18 +161,15 @@ function submitVote(objBook) {
 function showWunderlist(res) {
 
     // if something wrong
-    if (res.msg && res.msg == 'book_not_found') {
+    if (res.errcode && res.errcode == 1) {
         alert("Something wrong!");
         return;
     }
 
-    //if (res instanceof Object) {
+    //if (pageTitle == 'Continue-add-wunderlist') {
     //    res = res.books;
     //}
-    if (pageTitle == 'Continue-add-wunderlist') {
-        res = res.books;
-    }
-
+    res = (res.books || res);
     // the number of wunderlist
     var count = res.length;
     for (var i = 0; i < count; ++i) {
@@ -199,53 +199,76 @@ switch (pageTitle) {
     case 'Continue-wunderlist':
         handleWunderlistPage();
         break;
-    case 'Continue-add-wunderlist':
-        handleWunderlistAdd();
-        break;
+    //case 'Continue-add-wunderlist':
+    //    handleWunderlistAdd();
+    //    break;
 }
 
 function handleWunderlistPage() {
-    document.onreadystatechange = function () {
 
-        // change the style of nav
-        var publicNav = document.getElementById('public-nav');
-        publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
-        publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
-        publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
+    // click to add wunderlist
+    var addWunder = document.getElementById('my-wunderlist');
+    addWunder.onclick = function () {
+        var addWunderCotent = document.getElementById('add-wunderlist-content');
+        addWunderCotent.style.display = 'block';
 
-        var xhr = new XMLHttpRequest();
+        boolAddWunder = true;
+        // listen to handleWunderlistAdd
+        handleWunderlistAdd();
 
-        xhr.onload = function () {
-            var res = JSON.parse(xhr.responseText);
-            showWunderlist(res);
+        // shot down add wunderlist
+        var shotDown = document.getElementById('shot-down-add-wunder');
+        shotDown.onclick = function () {
+            boolAddWunder = false;
+            addWunderCotent.style.display = 'none';
         }
-
-        xhr.open('get', '/wunderlist/get', true);
-        xhr.send();
     }
+
+    // change the style of nav
+    var publicNav = document.getElementById('public-nav');
+    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
+    publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
+    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
+
+    // send wunderlist require
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.responseText);
+        showWunderlist(res);
+
+        console.log(res)
+    }
+
+    xhr.open('get', '/wunderlist/get?page=1&sort=vote_count', false);
+    xhr.send();
+
 }
 
 function handleWunderlistAdd() {
-    var isbnBox = document.getElementById('search');
+    var isbnBox = document.getElementById('add-wunder-search');
 
     isbnBox.onfocus = function () {
         // lister to Enter when focus on search-box 
         this.onkeydown = function (event) {
+
             var e = event || window.event;
 
             // if not Enter key, return
             if (e && e.keyCode != 13) return;
 
             // remove all node that searched just now
-            var father = document.getElementById('content');
+            var father = document.getElementById('show-block');
+            //father = father.getElementById('show-block');
             var childen = father.childNodes;
-            for (var i = 0; i < childen.length; ++i) {
+            var childenLength = childen.length;
+            for (var i = 0; i < childenLength; ++i) {
                 father.removeChild(childen[0]);  // there have some problem
             }
 
             var isbnCode = isbnBox.value;
 
-            var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=5';
+            var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=10';
 
             // CROS
             $.ajax({
