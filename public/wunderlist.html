@@ -3,6 +3,7 @@
 <head>
   <title>Continue-wunderlist</title>
   <link rel="stylesheet" href="css/public.css" />
+  <script src="/static/js/jquery-1.8.3.min.js"></script>
 </head>
 <body id="wunderlist-page">
   <header id="public-head">
@@ -22,7 +23,7 @@
         <a href="javascript:;" id="time-order">&nbsp;最新添加</a>
         <a href="javascript:;" id="pop-order">&nbsp;人气最高 </a>
       </span>
-      <a href="javascript:;" id="my-wunderlist">查看我的愿望清单</a>
+      <a href="javascript:;" id="my-wunderlist">添加入愿望清单</a>
     </div>
     <div id="wunder-list">
       <!--<div class="book-inf">
@@ -67,6 +68,9 @@
           <span id="err-message">此本书在愿望清单中已存在，返回并查看</span>
         </div>
       </div>
+      <div id="show-block">
+      </div>
+      <button id="shot-down-add-wunder">取消</button>
     </div>
 
   </content>

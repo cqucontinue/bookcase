@@ -197,7 +197,7 @@ class WunEditHandler(BaseHandler):
 
             wunbook["created_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
             wunbook["updated_at"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
-            coll.insert(wunbook)
+            coll_w.insert(wunbook)
 
             # Save success
             insert_sucs = {
