@@ -2,18 +2,19 @@
 <html>
 <head>
   <title>Continue-wunderlist</title>
-  <link rel="stylesheet" href="/static/Icss/public.css" />
+  <link rel="stylesheet" href="/static/css/public.css" />
   <script src="/static/js/checkLogin.js"></script> 
-  <script src="/static/js/jquery-1.8.3.min.js"></script>
+  <script src="/static/js/jquery.js"></script>
 </head>
 <body id="wunderlist-page">
   <header id="public-head">
     <div id="header-content">
       <img id="logo" src="/static/imgs/donate-logo.png" />
-      <nav id="public-nav">
-        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="donate.html" target="_self">DONATE</a>|<a class="wonderlist" href="wunderlist.html" target="_self">WONDUWELIST</a>
-      </nav>
+      
       <div id="personal-inf"></div>
+      <nav id="public-nav">
+        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="donate.html" target="_self">DONATE</a>|<a class="wonderlist" href="wunderlist.html" target="_self">WUNDERLIST</a>
+      </nav>
     </div>
   </header>
   <content id="wunderlist-content">
@@ -65,10 +66,11 @@
       <div class="search-wrap">
         <input type="text" value="" id="add-wunder-search" />
         <div class="err-tip">
-          <img src="/imgs/err-ico.jpg" alt="" class="err-ico" />
-          <span id="err-message">此本书在愿望清单中已存在，返回并查看</span>
+          <img src="/static/imgs/err-ico.jpg" class="err-ico" />
+          <span id="err-message"></span>
         </div>
       </div>
+      <span id="searching-tip">真在搜索，请稍等</span>
       <div id="show-block">
       </div>
       <button id="shot-down-add-wunder">取消</button>

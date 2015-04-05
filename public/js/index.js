@@ -51,6 +51,10 @@ function handleDonatePage() {
     publicNav.getElementsByClassName('donate')[0].style.color = '#0084B5';
     publicNav.getElementsByClassName('wonderlist')[0].style.color = '#767779';
 
+    alert('捐献页面还未开通，请开通后再访问');
+    location.href = '/wunderlist.html';
+    // TODO: can't access donate.html
+
     var isbnBox = document.getElementById('search-box');
 
     isbnBox.onfocus = function () {
@@ -115,7 +119,7 @@ function handleDonatePage() {
             data.append('tags', bookInf.tags);
             data.append('donor', bookInf.donor);
             // forbid cros
-            fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
+            data.append('_xsrf', CookieUtil.get('_xsrf') || '');
 
             //Object.toString(bookInf)
             xhr.open('post', '/book/edit', true);
@@ -189,7 +193,7 @@ function submitLoginReq() {
             tip.innerText = '账号或密码错误！';
             tip.style.display = 'block';
         } else {
-            location.href = '/donate.html';
+            location.href = '/wunderlist.html';
         }
     }
 

@@ -114,15 +114,15 @@ a {
     width: 32px;
     height: 32px;
     margin: 9px 0 4px 19px;
-    /*background-color: ActiveBorder;*/
-    float: left;
+    float: right;
     position: relative;
     /*left: 715px;*/
 }
 
 #public-head #public-nav {
-    float: left;
-    margin: 26px 0 6px 490px;
+    float: right;
+    /*margin: 26px 0 6px 490px;*/
+    margin: 26px 0 6px 0;
     height: 13px;
     font-size: 13px;
     color: #767779;
@@ -148,7 +148,7 @@ a {
     margin: 0 auto 30px auto;
     width: 930px;
     height: 964px;
-    background-color: ActiveBorder;
+    background-color: #fff;
 }
 
 #donate-content #title {
@@ -237,6 +237,7 @@ a {
     float: left;
     width: 164px;
     height: 30px;
+    overflow: hidden;
     font-size: 12px;
 }
 
@@ -270,7 +271,7 @@ a {
     margin: 0 auto;
     width: 930px;
     height: auto;
-    background-color: ActiveBorder;
+    background-color: #fff;
 }
 
 #wunderlist-page #title {
@@ -304,6 +305,9 @@ a {
     font-size: 14px;
     float: right;
 }
+#wunderlist-page #my-wunderlist:hover {
+    color: #528BB8;
+}
 
 #wunderlist-page a {
     color: #A0A0A0;
@@ -320,7 +324,7 @@ a {
     /*max-height: 948px;*/  /* 237 * 4 */
     padding: 0 35px;
     float: left;
-    background-color: ActiveBorder;
+    background-color: #fff;
 
     overflow: hidden;
 }
@@ -409,7 +413,7 @@ a {
     height: 19px;
     width: 788px;
     padding: 20px 70px 20px;
-    background-color: ActiveBorder;
+    background-color: #fff;
 
     float: left;
 }
@@ -463,7 +467,7 @@ a {
     width: 100%;
     min-height: 400px;
     background-color: rgb(255, 255, 255);
-    top: 0;
+    top: 150px;
     left: 0;
     margin-bottom: 50px;
 
@@ -516,6 +520,12 @@ a {
     padding: 0 5px;
     font-size: 15px;
     float: left;
+}
+
+#add-wunderlist-content #searching-tip {
+    color: #000;
+    font-size: 14px;
+    display: none;
 }
 
 #add-wunderlist-content .err-tip {

@@ -121,10 +121,19 @@ Wunderlist.prototype.handleSpecialNode = function () {
         // add like botton
         var butLike = document.createElement('img');
         butLike.className = 'want-ico';
-        butLike.src = '/static/imgs/want-icon.png';
         // listen to LIKE event, if didn't vote before
-        butLike.onclick = function () {
-            submitVote(objWunder);
+        if (hadVoted(objWunder)) {
+            butLike.src = '/static/imgs/had-want-icon.png';
+            butLike.style.cursor = 'not-allowed';
+            butLike.onclick = function () {
+                // do nothing;
+            }
+        }
+        else if (!hadVoted(objWunder)) {
+            butLike.src = '/static/imgs/want-icon.png';
+            butLike.onclick = function () {
+                submitVote(objWunder);
+            }
         }
 
         otherInf.getElementsByClassName('want-too')[0].appendChild(butLike);
@@ -172,8 +181,16 @@ function submitWunder(objWunder) {
         var res = JSON.parse(xhr.responseText);
 
         if (res.errcode && res.errcode == 1) {
-            alert('Something wrong! Try again later');
-            alert(res.errmsg);
+            // show the err tip block
+            var errTip = document.getElementById('add-wunderlist-content')
+                .getElementsByClassName('err-tip')[0];
+            errTip.style.display = 'block';
+            if (res.errmsg && res.errmsg == 'book_got') {
+                document.getElementById('err-message').innerText = '此书已有，返回并查看';
+            }
+            else if (res.errmsg && res.errmsg == 'book_exist') {
+                document.getElementById('err-message').innerText = '此本书在愿望清单中已存在，返回并查看';
+            }
         } else {
             alert('Success!');
             // turn to wunderlist.html
@@ -217,6 +234,7 @@ function submitVote(objBook) {
         } else {
             // refresh the count of vote
             // TODO: when vote success, upload a new vote-icon
+            objBook.node.getElementsByClassName('want-ico')[0].src = '/static/imgs/had-want-icon.png';
             objBook.node.getElementsByClassName('vote-count')[0].innerText = ++objBook.voteCount;
         }
     }
@@ -242,6 +260,16 @@ function showWunderlist(res) {
     res = (res.books || res);
     // the number of wunderlist
     var count = res.length;
+    console.log(count);
+    // if there is no book
+    if (count == 0) {
+        var errTip = document.getElementsByClassName('err-tip')[0];
+        errTip.style.display = 'block';
+
+        var errMsg = document.getElementById('err-message');
+        errMsg.innerText = '无结果，请核对后在输入';
+    }
+
     for (var i = 0; i < count; ++i) {
         var temp = new Wunderlist();
         temp.image = res[i].image;
@@ -289,6 +317,11 @@ function handleWunderlistPage() {
     // listen to add-wunderlist-block occupied
     var addWunder = document.getElementById('my-wunderlist');
     addWunder.onclick = function () {
+
+        // hidden the err tip block
+        document.getElementById('add-wunderlist-content')
+            .getElementsByClassName('err-tip')[0].style.display = 'none';
+
         var addWunderCotent = document.getElementById('add-wunderlist-content');
         addWunderCotent.style.display = 'block';
 
@@ -322,11 +355,16 @@ function handleWunderlistAdd() {
         // lister to Enter when focus on search-box 
         this.onkeydown = function (event) {
 
+            // hidden err when input agian
+            var errTip = document.getElementsByClassName('err-tip')[0];
+            errTip.style.display = 'none';
+
             var e = event || window.event;
 
             // if not Enter key, return
             if (e && e.keyCode != 13) return;
 
+            document.getElementById('searching-tip').style.display = 'block';
             // remove all node that searched just now
             var father = document.getElementById('show-block');
             cleanAllChilden(father);
@@ -342,13 +380,24 @@ function handleWunderlistAdd() {
                 async: false,
                 dataType: 'jsonp',
                 jsonp: 'callback',
+                //ajaxSend: function () {
+                    
+                //},
                 success: function (json) {
+                    document.getElementById('searching-tip').style.display = 'none';
                     showWunderlist(json)
                 },
                 error: function () {
-                    alert('fail');
+                    
                 }
             });
+            //.done(function (data) {
+            //    document.getElementById('searching-tip').style.display = 'none';
+            //    showWunderlist(data);
+            //})
+            //.fail(function () {
+            //    alert('fail');
+            //});
         }
     }
 }
@@ -459,5 +508,13 @@ function updatePages() {
 // check whether voted before, if had voted, can't vote again
 //
 function hadVoted(_objBook) {
+    var currUserId = CookieUtil.get('identify');
 
+    var voterLen = _objBook.voter.length;
+    for (var i = 0; i < voterLen; ++i) {
+        if (currUserId == _objBook.voter[i].member_id) {
+            return true;
+        }
+    }
+    return false;
 }
