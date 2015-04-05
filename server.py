@@ -38,7 +38,7 @@ class Application(tornado.web.Application):
         handlers = [
             # Handler fisrt request
             (r"/", MainHandler),
-            (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
+            (r"/((index|donate|login)\.html)", web.StaticFileHandler, {"path": "public"}),
             # API
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
@@ -73,10 +73,12 @@ class Application(tornado.web.Application):
 
 
 class MainHandler(BaseHandler):
-    @tornado.web.authenticated
     def get(self):
         self.set_cookie("_xsrf", self.xsrf_token)
-        self.redirect("/donate.html")
+        if self.get_current_user():
+            self.redirect("/donate.html")
+        else:
+            self.redirect("/login.html")
 
 
 def main():
