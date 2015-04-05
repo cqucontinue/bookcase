@@ -150,6 +150,10 @@ class WunSearchHandler(BaseHandler):
 
 class WunEditHandler(BaseHandler):
     def post(self):
+        if not self.get_current_user():
+            self.redirect("/auth/nologin")
+            return
+
         isbn = self.get_argument("isbn", None)
         if not isbn:
             no_isbn = {
@@ -188,8 +192,8 @@ class WunEditHandler(BaseHandler):
                        "publisher", "image", "tags", "pub_date"]
         if isbn:
             wunbook = {}
-            wunbook["voter"] = []
-            wunbook["vote_count"] = 0
+            wunbook["voter"] = [{"member_id": self.get_current_user()}]
+            wunbook["vote_count"] = 1
 
             for key in book_fields:
                 wunbook[key] = self.get_argument(key, None)
