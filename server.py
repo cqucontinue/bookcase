@@ -38,7 +38,7 @@ class Application(tornado.web.Application):
         handlers = [
             # Handler fisrt request
             (r"/", MainHandler),
-            (r"/((index|donate|login)\.html)", web.StaticFileHandler, {"path": "public"}),
+            (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
             # API
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
