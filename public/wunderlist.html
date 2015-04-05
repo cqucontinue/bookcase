@@ -3,6 +3,7 @@
 <head>
   <title>Continue-wunderlist</title>
   <link rel="stylesheet" href="css/public.css" />
+  <script src="/static/js/checkLogin.js"></script> 
   <script src="/static/js/jquery-1.8.3.min.js"></script>
 </head>
 <body id="wunderlist-page">
@@ -23,7 +24,7 @@
         <a href="javascript:;" id="time-order">&nbsp;最新添加</a>
         <a href="javascript:;" id="pop-order">&nbsp;人气最高 </a>
       </span>
-      <a href="javascript:;" id="my-wunderlist">添加入愿望清单</a>
+      <a href="javascript:;" id="my-wunderlist">添加新书入愿望清单</a>
     </div>
     <div id="wunder-list">
       <!--<div class="book-inf">
@@ -38,7 +39,7 @@
         </div>
         <div class="other-inf">
           <span class="create-time inf">添加时间： <span></span></span>
-          <span class="want-too inf"><span>我也想看： </span><img class="want-ico" src="/static/imgs/want-icon.png" /></span>
+          <span class="want-too inf"><span>我也想看： </span><img class="want-ico" src="/static/imgs/want-icon.png" /></span><span class="vote-count"></span>
           <span class="want-too-list inf">张世宝、陈敏、米文卓等人也想看</span>
         </div>
       </div>-->
@@ -47,7 +48,7 @@
       <ul>
         <li class="last-page">尾页</li>
         <li class="next-page">下一页&gt;</li>
-        <li class="curr-page-inf"><span class="curr">1</span> / <span class="total">20</span></li>
+        <li class="curr-page-inf"><span class="curr"></span> / <span class="total"></span></li>
         <li class="pre-page">&lt;上一页</li>
         <li class="first-page">首页</li>
       </ul>
