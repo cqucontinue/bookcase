@@ -114,11 +114,12 @@ function handleDonatePage() {
             data.append('image', bookInf.image);
             data.append('tags', bookInf.tags);
             data.append('donor', bookInf.donor);
+            // forbid cros
+            fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
 
             //Object.toString(bookInf)
             xhr.open('post', '/book/edit', true);
-            xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
-            //alert(bookInf.isbn)
+            //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
             xhr.send(data);
             //
         }
@@ -177,6 +178,7 @@ function submitLoginReq() {
     var fd = new FormData();
     fd.append('member_id', username);
     fd.append('password', password);
+    fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
 
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -190,6 +192,6 @@ function submitLoginReq() {
     }
 
     xhr.open('post', '/auth/login', true);
-    xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
+    //xhr.setRequestHeader("_xsrf", CookieUtil.get('_xsrf') || '');
     xhr.send(fd);
 }
