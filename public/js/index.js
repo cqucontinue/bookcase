@@ -22,35 +22,19 @@ function handleLoginPage() {
     var submit = document.getElementById('login-buttom');
     var tip = document.getElementById('login-tip');
 
-    submit.onclick = function () {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
+    var passwordNode = document.getElementById('password');
+    passwordNode.onfocus = function () {
+        this.onkeydown = function (event) {
+            var e = event || window.event;
 
-        if (username == '' || password == '') {
-            tip.innerText = '请输入账号、密码。';
-            tip.style.display = 'block';
-            return;
-        }
-
-        var fd = new FormData();
-        fd.append('member_id', username);
-        fd.append('password', password);
-
-        var xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-            var res = JSON.parse(xhr.responseText);
-            if (res.errcode && res.errcode == 1) {
-                tip.innerText = '账号或密码错误！';
-                tip.style.display = 'block';
-            } else {
-                location.href = '/donate.html';
+            if (e && e.keyCode != 13) return;
+            else {
+                submitLoginReq();
             }
         }
-
-        xhr.open('post', '/auth/login', true);
-        xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
-        xhr.send(fd);
-
+    }
+    submit.onclick = function () {
+        submitLoginReq();
     }
 }
 
@@ -177,4 +161,35 @@ function reflashBookInf (json) {
         bookInf.donor = SubCookieUtil.get("identify", "userId");
     }
     
+}
+
+
+function submitLoginReq() {
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+
+    if (username == '' || password == '') {
+        tip.innerText = '请输入账号、密码。';
+        tip.style.display = 'block';
+        return;
+    }
+
+    var fd = new FormData();
+    fd.append('member_id', username);
+    fd.append('password', password);
+
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.responseText);
+        if (res.errcode && res.errcode == 1) {
+            tip.innerText = '账号或密码错误！';
+            tip.style.display = 'block';
+        } else {
+            location.href = '/donate.html';
+        }
+    }
+
+    xhr.open('post', '/auth/login', true);
+    xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
+    xhr.send(fd);
 }
