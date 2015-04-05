@@ -107,7 +107,7 @@ Wunderlist.prototype.handleSpecialNode = function () {
     }
 
     // if the page is wunderlist.html
-    if (pageTitle == 'Continue-wunderlist') {
+    if (boolAddWunder == false) {
 
         var otherInf = document.createElement('div');
         otherInf.className = 'other-inf';
@@ -122,7 +122,7 @@ Wunderlist.prototype.handleSpecialNode = function () {
         var butLike = document.createElement('img');
         butLike.className = 'want-ico';
         butLike.src = '/static/imgs/want-icon.png';
-        // listen to LIKE event
+        // listen to LIKE event, if didn't vote before
         butLike.onclick = function () {
             submitVote(objWunder);
         }
@@ -176,6 +176,8 @@ function submitWunder(objWunder) {
             alert(res.errmsg);
         } else {
             alert('Success!');
+            // turn to wunderlist.html
+            location.href = '/wunderlist.html';
         }
     }
 
@@ -191,7 +193,7 @@ function submitWunder(objWunder) {
     data.append('image', objWunder.image);
     data.append('tags', objWunder.tags);
     // forbid cros
-    fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
+    data.append('_xsrf', CookieUtil.get('_xsrf') || '');
 
     xhr.open('post', '/wunderlist/edit', true);
     //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
@@ -213,7 +215,6 @@ function submitVote(objBook) {
         if (res.errcode && res.errcode == 1) {
             alert('There has something wrong! Please try agian later!');
         } else {
-            //alert('Vote successful!');
             // refresh the count of vote
             // TODO: when vote success, upload a new vote-icon
             objBook.node.getElementsByClassName('vote-count')[0].innerText = ++objBook.voteCount;
@@ -452,4 +453,11 @@ function updatePages() {
 
     var total = document.getElementById('wunderlist-content').getElementsByClassName('total')[0];
     total.innerText = allPages;
+}
+
+//
+// check whether voted before, if had voted, can't vote again
+//
+function hadVoted(_objBook) {
+
 }

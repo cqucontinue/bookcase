@@ -20,7 +20,7 @@ switch (pageTitle) {
 function handleLoginPage() {
 
     var submit = document.getElementById('login-buttom');
-    var tip = document.getElementById('login-tip');
+    
 
     var passwordNode = document.getElementById('password');
     passwordNode.onfocus = function () {
@@ -166,6 +166,8 @@ function reflashBookInf (json) {
 
 
 function submitLoginReq() {
+    var tip = document.getElementById('login-tip');
+
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
