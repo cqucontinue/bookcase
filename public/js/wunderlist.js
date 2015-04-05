@@ -190,9 +190,11 @@ function submitWunder(objWunder) {
     data.append('pub_date', objWunder.pubDate);
     data.append('image', objWunder.image);
     data.append('tags', objWunder.tags);
+    // forbid cros
+    fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
 
     xhr.open('post', '/wunderlist/edit', true);
-    xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
+    //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
     xhr.send(data);
 }
 
