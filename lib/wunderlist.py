@@ -192,7 +192,7 @@ class WunEditHandler(BaseHandler):
                        "publisher", "image", "tags", "pub_date"]
         if isbn:
             wunbook = {}
-            wunbook["voter"] = [{"member_id": self.get_current_user()}]
+            wunbook["voter"] = [self.get_current_user()]
             wunbook["vote_count"] = 1
 
             for key in book_fields:
