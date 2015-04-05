@@ -48,7 +48,7 @@ class Application(tornado.web.Application):
             (r"/auth/login", LoginHandler),
             (r"/auth/nologin", NologinHandler),
             (r"/auth/logout", LogoutHandler),
-            # (r"/auth/register", RegisterHandler),
+            (r"/auth/register", RegisterHandler),
             (r"/wunderlist/get", GetWunBooksHandler),
             (r"/wunderlist/edit", WunEditHandler),
             (r"/wunderlist/vote", VoteHandler)
@@ -84,7 +84,7 @@ class MainHandler(BaseHandler):
 def main():
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    http_server.listen(options.port, address="127.0.0.1")
     tornado.ioloop.IOLoop.instance().start()
 
 
