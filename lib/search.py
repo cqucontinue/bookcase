@@ -16,7 +16,7 @@ import tornado.web
 from tornado.options import define, options
 import pymongo
 
-
+'''
 if __name__ == "__main__":
     define("port", default=8000, type=int, help="run on the given port")
 
@@ -37,7 +37,7 @@ class Application(tornado.web.Application):
 if __name__ == "__main__":
     class BaseHandler(tornado.web.RequestHandler):
         pass
-
+'''
 
 class SearchHandler(BaseHandler):
     def get(self):

@@ -13,7 +13,7 @@ from passlib.hash import md5_crypt
 
 from tornado.options import define, options
 
-
+'''
 if __name__ == "__main__":
     define("port", default=8000, type=int, help="run on the given port")
     define("mongodb_host", default="127.0.0.1", help="database host")
@@ -45,7 +45,7 @@ class Application(tornado.web.Application):
         conn = pymongo.Connection(options.mongodb_host, 
                                   options.mongodb_port)
         self.db = conn[options.db_continue]
-
+'''
 
 class AuthHandler(BaseHandler):
     @tornado.web.authenticated
@@ -55,6 +55,7 @@ class AuthHandler(BaseHandler):
 
 class NologinHandler(BaseHandler):
     def get(self):
+        self.set_cookie("_xsrf", self.xsrf_token)
         not_login = {
             "errmsg": "not_login",
             "errcode": 1

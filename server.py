@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Private module
+from lib.base import BaseHandler
 from lib.book import (GetHandler, EditHandler,
                       DeleteHandler)
 from lib.auth import (AuthHandler, LoginHandler,
@@ -35,8 +36,10 @@ define("coll_wunder", default="wunbooks", help="wunder books collection")
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            # FOR DEBUG
-            (r"/(.*\.(html|css|js|jpg|png))", web.StaticFileHandler, {"path": "public"}),
+            # Handler fisrt request
+            (r"/", MainHandler),
+            (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
+            # API
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
             (r"/book/delete", DeleteHandler),
@@ -45,7 +48,7 @@ class Application(tornado.web.Application):
             (r"/auth/login", LoginHandler),
             (r"/auth/nologin", NologinHandler),
             (r"/auth/logout", LogoutHandler),
-            (r"/auth/register", RegisterHandler),
+            # (r"/auth/register", RegisterHandler),
             (r"/wunderlist/get", GetWunBooksHandler),
             (r"/wunderlist/edit", WunEditHandler),
             (r"/wunderlist/vote", VoteHandler)
@@ -54,7 +57,7 @@ class Application(tornado.web.Application):
         settings = {
             "login_url": "/auth/nologin",
             # TODO finish xrsf
-            # "xsrf_cookies": True,
+            "xsrf_cookies": True,
             # Suite to one instance
             "cookie_secret": superuuid.generate(),
             # favicon.ico robots.txt also direct here
@@ -67,6 +70,13 @@ class Application(tornado.web.Application):
         conn = pymongo.Connection(options.mongodb_host,
                                   options.mongodb_port)
         self.db = conn[options.db_continue]
+
+
+class MainHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.set_cookie("_xsrf", self.xsrf_token)
+        self.redirect("/donate.html")
 
 
 def main():

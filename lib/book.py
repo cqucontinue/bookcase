@@ -13,7 +13,7 @@ import pymongo
 
 from tornado.options import define, options
 
-
+'''
 if __name__ == "__main__":
     define("port", default=8000, type=int, help="run on the given port")
     define("db_continue", default="continue", help="database name")
@@ -33,7 +33,7 @@ class Application(tornado.web.Application):
         conn = pymongo.Connection("localhost", 27017)
         self.db = conn[options.db_continue]
         tornado.web.Application.__init__(self, handlers, **settings)
-
+'''
 
 class EditHandler(BaseHandler):
     def post(self):
