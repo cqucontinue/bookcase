@@ -17,7 +17,6 @@ mongodb:
 members {
     "_id": member_id,        // NOT NULL
     "fullname": string,      // DEFAULT NULL
-    "password": string,      // DEFAULT NULL
     "password_hash": string, // NOT NULL
     "url_token": string,     // DEFAULT NULL
     "avatar_path": string,   // DEFAULT NULL
