@@ -12,7 +12,6 @@ switch (pageTitle) {
     case 'Continue-donate':
         handleDonatePage();
         break;
-        
 }
 
 //
@@ -21,36 +20,21 @@ switch (pageTitle) {
 function handleLoginPage() {
 
     var submit = document.getElementById('login-buttom');
-    var tip = document.getElementById('login-tip');
+    
 
-    submit.onclick = function () {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
+    var passwordNode = document.getElementById('password');
+    passwordNode.onfocus = function () {
+        this.onkeydown = function (event) {
+            var e = event || window.event;
 
-        if (username == '' || password == '') {
-            tip.innerText = '请输入账号、密码。';
-            tip.style.display = 'block';
-            return;
-        }
-
-        var fd = new FormData();
-        fd.append('member_id', username);
-        fd.append('password', password);
-
-        var xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-            var res = JSON.parse(xhr.responseText);
-            if (res.errcode && res.errcode == 1) {
-                tip.innerText = '账号或密码错误！';
-                tip.style.display = 'block';
-            } else {
-                location.href = '/donate.html';
+            if (e && e.keyCode != 13) return;
+            else {
+                submitLoginReq();
             }
         }
-
-        xhr.open('post', '/auth/login', true);
-        xhr.send(fd);
-
+    }
+    submit.onclick = function () {
+        submitLoginReq();
     }
 }
 
@@ -66,6 +50,10 @@ function handleDonatePage() {
     publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
     publicNav.getElementsByClassName('donate')[0].style.color = '#0084B5';
     publicNav.getElementsByClassName('wonderlist')[0].style.color = '#767779';
+
+    alert('捐献页面还未开通，请开通后再访问');
+    location.href = '/wunderlist.html';
+    // TODO: can't access donate.html
 
     var isbnBox = document.getElementById('search-box');
 
@@ -87,7 +75,7 @@ function handleDonatePage() {
                 type: 'GET',
                 async: false,
                 dataType: 'jsonp',
-                jsonp: "callback",
+                jsonp: 'callback',
                 success: function (json) {
                     reflashBookInf(json)
                 },
@@ -103,7 +91,7 @@ function handleDonatePage() {
 
     donateSubmit.onclick = function () {
         if (!bookInf.isbn) {
-            alert("请输入所捐书籍的ISBN");
+            alert("请正确输入所捐书籍的ISBN");
             return;
         } else {
             var xhr = new XMLHttpRequest();
@@ -128,11 +116,14 @@ function handleDonatePage() {
             data.append('publisher', bookInf.publisher);
             data.append('pub_date', bookInf.pubDate);
             data.append('image', bookInf.image);
+            data.append('tags', bookInf.tags);
             data.append('donor', bookInf.donor);
+            // forbid cros
+            data.append('_xsrf', CookieUtil.get('_xsrf') || '');
 
             //Object.toString(bookInf)
             xhr.open('post', '/book/edit', true);
-            //alert(bookInf.isbn)
+            //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
             xhr.send(data);
             //
         }
@@ -170,8 +161,43 @@ function reflashBookInf (json) {
         bookInf.publisher = json.publisher;
         bookInf.pubDate   = json.pubdate;
         bookInf.image     = json.images.large;
+        bookInf.tags      = json.tags;
 
         bookInf.donor = SubCookieUtil.get("identify", "userId");
     }
     
+}
+
+
+function submitLoginReq() {
+    var tip = document.getElementById('login-tip');
+
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+
+    if (username == '' || password == '') {
+        tip.innerText = '请输入账号、密码。';
+        tip.style.display = 'block';
+        return;
+    }
+
+    var fd = new FormData();
+    fd.append('member_id', username);
+    fd.append('password', password);
+    fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
+
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        var res = JSON.parse(xhr.responseText);
+        if (res.errcode && res.errcode == 1) {
+            tip.innerText = '账号或密码错误！';
+            tip.style.display = 'block';
+        } else {
+            location.href = '/wunderlist.html';
+        }
+    }
+
+    xhr.open('post', '/auth/login', true);
+    //xhr.setRequestHeader("_xsrf", CookieUtil.get('_xsrf') || '');
+    xhr.send(fd);
 }

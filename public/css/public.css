@@ -5,11 +5,15 @@ button:focus {
     outline-color: rgba(0, 0, 0, 0);
 }
 
+a {
+    text-decoration: none;
+}
+
 /***********************************************
     work for login.html
 ***********************************************/
 #login-page {
-    background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAQDAwMDAwQDAwQFBAMEBQcFBAQFBwgGBgcGBggKCAgICAgICggKCgsKCggNDQ4ODQ0SEhISEhQUFBQUFBQUFBT/2wBDAQUFBQgHCA8KCg8SDwwPEhYVFRUVFhYUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABUAFIDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAJRAAAQIFBAEFAAAAAAAAAAAAAAIDAQQSNFNzkrHSERQiQlFi/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AN/AAJJuXNNHKwKgAAACSblzTRysCoAAAAASTcuaaOVgVAAAAEk3LmmjlYFQAACVMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AUzORvZHuBKEJj1C/ejzQj4R+1foCtMzkb2R7gKZnI3sj3AUzORvZHuBUABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAAAEk3LmmjlYFQAAABJNy5po5WBUAAAAAJJuXNNHKwKgAAACSblzTRysCoAABKmZyN7I9wFMzkb2R7gShCY9Qv3o80I+EftX6ArTM5G9ke4CmZyN7I9wFMzkb2R7gKZnI3sj3AlCEx6hfvR5oR8I/av0BWmZyN7I9wFMzkb2R7gKZnI3sj3AqAAkm5c00crAqAAAAJJuXNNHKwKgAAAABJNy5po5WBUAAAASTcuaaOVgVAAAAACSblzTRysCoAAAAkm5c00crAqAAAf/9k=') /*../imgs/login-bg.jpg*/;
+    background-image: url('/static/imgs/login-bg.jpg') /*../imgs/login-bg.jpg*/;
     background-repeat: repeat;
 }
 
@@ -81,16 +85,11 @@ button:focus {
 }
 
 /******************************************
-    work for donate.html
+    work for public nav
 ******************************************/
 
-#donate-page {
-    font-family: 'Microsoft JhengHei';
-    margin: 0;
-    background-image: url(/imgs/donate_bg.jpg);
-}
-
 #public-head {
+    font-family: 'Microsoft JhengHei';
     display: block;
     width: 100%;
     min-width: 930px;
@@ -111,18 +110,19 @@ button:focus {
     float: left;
 }
 #public-head #personal-inf {
-    width: 111px;
-    height: 44px;
-    margin: 0 0 0 392px;
-    background-color: ActiveBorder;
-    float: left;
+    background-image: url('/static/imgs/headphoto.png');
+    width: 32px;
+    height: 32px;
+    margin: 9px 0 4px 19px;
+    float: right;
     position: relative;
     /*left: 715px;*/
 }
 
 #public-head #public-nav {
-    float: left;
-    margin: 26px 0 6px 38px;
+    float: right;
+    /*margin: 26px 0 6px 490px;*/
+    margin: 26px 0 6px 0;
     height: 13px;
     font-size: 13px;
     color: #767779;
@@ -133,20 +133,29 @@ button:focus {
     color: #767779;
 }
 
+/*************************************************
+    work for donate.html
+**************************************************/
+
+#donate-page {
+    font-family: 'Microsoft JhengHei';
+    margin: 0;
+    background-image: url(/static/imgs/donate_bg.jpg);
+}
 
 #donate-content {
     display: block;
     margin: 0 auto 30px auto;
     width: 930px;
     height: 964px;
-    background-color: ActiveBorder;
+    background-color: #fff;
 }
 
 #donate-content #title {
     /*position: relative;*/
     width: 100%;
     height: 500px;
-    background-image: url(/imgs/donate_title.jpg);
+    background-image: url(/static/imgs/donate_title.jpg);
 }
 
 #donate-content #search-box {
@@ -228,6 +237,7 @@ button:focus {
     float: left;
     width: 164px;
     height: 30px;
+    overflow: hidden;
     font-size: 12px;
 }
 
@@ -243,4 +253,368 @@ button:focus {
     font-size: 13px;
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0);
+}
+
+/***********************************************
+    work for wunderlist page
+************************************************/
+#wunderlist-page {
+    font-family: 'Microsoft JhengHei';
+    background-image: url('/static/imgs/donate_bg.jpg');
+    margin: 0;
+}
+
+#wunderlist-content {
+    overflow: hidden;
+    display: block;
+    /*margin:0 calc((100% - 930px)/2) 30px;*/
+    margin: 0 auto;
+    width: 930px;
+    height: auto;
+    background-color: #fff;
+}
+
+#wunderlist-page #title {
+    background-image: url('/static/imgs/wunderlist-title.jpg');
+    width: 100%;
+    height: 400px;
+
+    float: left;
+}
+
+#wunderlist-page #choose-order-block {
+    color: #A0A0A0;
+    height:50px;
+    width: 788px;
+    padding: 0 70px;
+    border-bottom: 1px solid #767779;
+
+    float: left;
+}
+
+#wunderlist-page #choose-order ,
+#wunderlist-page #my-wunderlist {
+    font-size: 14px;
+    display: block;
+    height: 15px;
+    margin: 26px 0 9px 0;
+    float: left;
+}
+
+#wunderlist-page #my-wunderlist {
+    font-size: 14px;
+    float: right;
+}
+#wunderlist-page #my-wunderlist:hover {
+    color: #528BB8;
+}
+
+#wunderlist-page a {
+    color: #A0A0A0;
+}
+
+#wunderlist-page #choose-order #time-order {
+    color: #528BB8;
+}
+
+#wunderlist-page #wunder-list {
+    width: 858px;
+    height: auto;
+    min-height: 237px;
+    /*max-height: 948px;*/  /* 237 * 4 */
+    padding: 0 35px;
+    float: left;
+    background-color: #fff;
+
+    overflow: hidden;
+}
+
+#wunderlist-page .book-inf {
+    width: 359px;
+    height: 201px;
+    float: left;
+    margin: 18px 35px;
+    color: #6D6D6D;
+}
+
+#wunderlist-page .book-inf .cover {
+    width: 135px;
+    height: 199px;
+    border: 1px solid #767779;
+    float: left;
+}
+
+#wunderlist-page .book-inf .details {
+    width: 202px;
+    height: 96px;
+    margin-left: 20px;
+    float: left;
+    font-size: 15px;
+}
+
+#wunderlist-page .book-inf .details .inf {
+    display: block;
+    height: 17px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+#wunderlist-page .book-inf .details .isbn,
+#wunderlist-page .book-inf .details .get-more
+ {
+    display: none;
+}
+
+
+#wunderlist-page .book-inf .other-inf {
+    width: 202px;
+    margin:63px 0 0 20px;
+    float: left;
+    font-size: 15px;
+}
+
+#wunderlist-page .book-inf .other-inf .inf {
+    line-height: 17px;
+    display: block;
+    margin-bottom: 8px;
+    height: 17px;
+    font-size: 15px;
+}
+
+#wunderlist-page .book-inf .other-inf .create-time {
+    display: none;
+}
+
+#wunderlist-page .book-inf .other-inf .want-too-list {
+    font-size: 12px;
+    color: #A0A0A0;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+#wunderlist-page .book-inf .other-inf .want-too span {
+    float: left;
+}
+
+#wunderlist-page .book-inf .other-inf .want-too .vote-count {
+    margin: 0 6px;
+}
+
+#wunderlist-page .book-inf .other-inf .want-ico {
+    margin: 1px 0 auto 4px;
+    cursor: pointer;
+    float: left;
+    /*display: block;*/
+}
+
+
+
+.page-turning-block {
+    height: 19px;
+    width: 788px;
+    padding: 20px 70px 20px;
+    background-color: #fff;
+
+    float: left;
+}
+
+.page-turning-block ul {
+    padding: 0;
+    margin: 0;
+}
+
+.page-turning-block li {
+    list-style: none;
+
+    float: right;
+    color: #4083AE;
+    line-height: 17px;
+    text-align: center;
+    font-size: 15px;
+    margin: 0 13px;
+}
+
+.page-turning-block .curr-page-inf {
+    color: #A0A0A0;
+}
+.page-turning-block .curr-page-inf .curr {
+    color: #4083AE;
+}
+
+.page-turning-block .last-page,
+.page-turning-block .first-page {
+    width: 42px;
+    height: 17px;
+    border: 1px solid #4083AE;
+    cursor: pointer;
+}
+.page-turning-block .next-page,
+.page-turning-block .pre-page {
+    width: 62px;
+    height: 17px;
+    border: 1px solid #4083AE;
+    cursor: pointer;
+}
+
+/***********************************************
+    work for add-wunderlist part
+************************************************/
+#add-wunderlist-content {
+    display: none;
+    position: fixed;
+    position: absolute;
+    min-width: 930px;
+    width: 100%;
+    min-height: 400px;
+    background-color: rgb(255, 255, 255);
+    top: 150px;
+    left: 0;
+    margin-bottom: 50px;
+
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+}
+
+#add-wunderlist-content #head-wrap {
+    width: 100%;
+    height: 40px;
+    background-color: rgb(65, 131, 179);
+}
+#add-wunderlist-content #head-wrap span {
+    width: 800px;
+    height: 100%;
+    margin: 0 auto;
+    color: rgb(255, 255, 255);
+    display: block;
+    line-height: 40px;
+    font-size: 17px;
+}
+
+#add-wunderlist-content #content-wrap {
+    height: auto;
+    width: 800px;
+    margin: 0 auto;
+    font-size: 15px;
+}
+
+#add-wunderlist-content .tips {
+    display: block;
+    width: 100%;
+    height: 22px;
+    font-size: 15px;
+    line-height: 22px;
+    margin: 20px 0;
+}
+
+#add-wunderlist-content .search-wrap {
+    width: 100%;
+    height: 22px;
+    margin: 13px 0;
+}
+
+#add-wunderlist-content #add-wunder-search {
+    height: 20px;
+    width: 300px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgb(255, 253, 236);
+    color: rgba(0, 0, 0, 0.5);
+    padding: 0 5px;
+    font-size: 15px;
+    float: left;
+}
+
+#add-wunderlist-content #searching-tip {
+    color: #000;
+    font-size: 14px;
+    display: none;
+}
+
+#add-wunderlist-content .err-tip {
+    display: none;
+    margin: 2.5px 15px;
+    float: left;
+}
+#add-wunderlist-content .err-ico {
+    float: left;
+    height: 17px;
+    width: 17px;
+}
+#add-wunderlist-content #err-message {
+    
+    float: left;
+    color: red;
+    font-size: 14px;
+    line-height: 17px;
+    margin: 0 5px;
+}
+
+#add-wunderlist-content #content-wrap #shot-down-add-wunder {
+    display: block;
+    width: 70px;
+    height: 22px;
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 3px;
+    background-color: rgb(59, 149, 245);
+    margin-right: 28px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    border: none;
+    float: right;
+}
+
+#add-wunderlist-content #show-block {
+    /*display: none;*/
+    overflow: hidden;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100px;
+    /*max-height: 300px;*/
+    /*overflow-x: scroll;*/
+    margin: 30px -11px 0 -11px;
+}
+
+
+#add-wunderlist-content #content-wrap .book-inf {
+    width: 137px;
+    height: auto; /* 147px*/
+    margin: 0 11px;
+
+    /*border: 1px solid red;*/
+}
+
+#add-wunderlist-content #content-wrap .book-inf .submit-add-wunder {
+    cursor: pointer;
+    background-color: rgb(59, 149, 245);
+    border: none;
+    color: #fff;
+}
+
+#add-wunderlist-content #content-wrap .book-inf .other-inf {
+    display: none;
+}
+
+#add-wunderlist-content #content-wrap .book-inf .cover {
+    width: 135px;
+    height: 198px;
+}
+#add-wunderlist-content #content-wrap .book-inf .details {
+    margin: 5px 0;
+    font-size: 12px;
+    width: 100%;
+    height: 137px;
+    /*height: auto;*/
+}
+#add-wunderlist-content #content-wrap .book-inf .details .inf {
+    overflow: visible;
+    margin-bottom: 3px;
+    max-height: 32px;
+    overflow: hidden;
+    height: auto;
+}
+#add-wunderlist-content #content-wrap .book-inf .details .publish-time,
+#add-wunderlist-content #content-wrap .book-inf .details .isbn,
+#add-wunderlist-content #content-wrap .book-inf .details .get-more {
+    display: none;
 }

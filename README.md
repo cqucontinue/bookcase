@@ -12,45 +12,69 @@ U can ssh continue@IP to update code and test your new feature
 ```json
 mongodb:
     - database: cotinue
-        - collections: contact, members, info, books
+        - collections: members, books, wunbooks
 
 members {
-    "_id": member_id, NOT NULL,
-    "fullname": string, DEFAULT NULL,
-    "nickname": string, DEFAULT NULL,
-    "password": string, NOT NULL,
-    "password_hash": string, DEFAULT NULL,
-    "url_token": string, DEFAULT NULL,
-    "avatar_path": string, DEFAULT NULL,
-    "created": string, NOT NULL,
-    "last_updated": string, NOT NULL
+    "_id": member_id,        // NOT NULL
+    "fullname": string,      // DEFAULT NULL
+    "password_hash": string, // NOT NULL
+    "url_token": string,     // DEFAULT NULL
+    "avatar_path": string,   // DEFAULT NULL
+    "created": string,       // NOT NULL
+    "last_updated": string,  // NOT NULL
+
+    "contact": {
+        "email": string,        // NULL
+        "phone": string         // NULL
+        // More can add here
+    },
+
+    "info": {
+        "grade": string,            // DEFAULT NULL
+        "gender": string,           // DEFAULT NULL
+        "school": string,           // DEFAULT NULL
+        "self_introduction": string // DEFAULT NULL
+    }
 }
 
-contact {
-    "_id": member_id, NOT NULL,
-    "email": string, NULL
-    "phone": string, NULL
-    ...
+books {
+    title: 标题, string
+    alt: 豆瓣链接, string
+    author: 作者, array, []
+    publisher: 出版社, array
+    image: 豆瓣图片链接, string
+    tags: array, []
+    isdonated: true or false, if true then set owner to "113"
+    donor: 捐赠人, array
+    pub_date: 出版时间, string
+    updated_at: string,
+    created_at: string
 }
 
-info {
-    "_id": member_id, NOT NULL,
-    "grade": string, DEFAULT NULL,
-    "gender": string, DEFAULT NULL,
-    "school": string, DEFAULT NULL,
-    "self_introduction": string, DEFAULT NULL,
-    ...
+wunbooks {
+    title: string,
+    alt: 豆瓣链接, string
+    author: array,
+    publisher: 出版社, string
+    image: 豆瓣图片链接, string
+    tags: 标签, array
+    pub_date: 出版时间, string
+    created_at: string,
+    updated_at: string,
+    voter: [member_id, ...],
+    vote_count: int
 }
-
 ```
 
 
 ##API
 ```json
-URI: http://book.113continue.com - Down!!!
+URL: http://book.113continue.com - Down!!!
 DEV: http://182.92.167.199
 
-HTTP Method: POST|GET
+HTTP Method:
+    GET 用于获取信息
+    POST 用于编辑(插入, 删除, 更新), 参数要添加 _xsrf (cookie里获得)
 Data type: JSON
 Time format: yyyy-MM-dd HH:mm:ss, "2015-02-16 01:58:00"
 ```
@@ -59,11 +83,14 @@ Time format: yyyy-MM-dd HH:mm:ss, "2015-02-16 01:58:00"
 >equal to insert + update
 
 ```json
-url: /book/edit
+method: POST
+
+uri: /book/edit
 
 para:
 required:
     isbn: string
+    _xsrf: string in cookie
 
 optional:
     title: 标题, string
@@ -73,7 +100,8 @@ optional:
     image: 豆瓣图片链接, string
     tags: array, []
     isdonated: true or false, if true then set owner to "113"
-    donor: 捐赠人, object in array
+    donor: 捐赠人, array
+    pub_date: 出版时间, string
     
 return:
     errmsg: ""
@@ -85,7 +113,7 @@ return:
 ```json
 method: GET
 
-url: /book/get
+uri: /book/get
 
 return:
     [
@@ -104,8 +132,8 @@ return:
 ```json
 method: GET
 
-url: /book/delete/isbn
-Ex: /book/delete/9780136019299
+uri: /book/delete?isbn=isbn_code
+Ex: /book/delete?isbn=9780136019299
 
 return:
     errmsg: "book_not_found"
@@ -120,12 +148,13 @@ required:
 ```json
 method: POST
 
-url: /auth/register
+uri: /auth/register
 
 para:
 required:
     member_id: string
     password: string
+    _xrfs: string in cookie
 
 optional:
     fullname: string
@@ -139,35 +168,34 @@ return:
 ```json
 method: POST
 
-url: /auth/login
+uri: /auth/login
 
 para:
 required:
     member_id: 现在用学号作为用户名
     password: string
+    _xrfs: string in cookie
     
 return:
     errcode: 0 成功 1 失败
     errmsg: "para_error" | "not_found" | "login_fail" 
 ```
 
-
 ####Logout
 ```json
 method: GET
 
-url: /auth/logout
+uri: /auth/logout
 
 return:
     errcode: 0 成功
 ```
 
-
 ####Get user stat
 ```json
 method: GET
 
-url: /auth/
+uri: /auth/
 
 return:
     errcode: 1 错误
@@ -183,6 +211,96 @@ return:
         "avatar_path": "",
         "url_token": ""
     }
+```
+
+####Get books in wunderlist - pagination
+```json
+method: GET
+
+uri: /wunderlist/get?page=int&pmax=max_books_each_page&sort=sort_method
+Ex: /wunderlist/get?page=1&pmax=8&sort=updated_at
+
+
+return:
+    {
+        "pages": 3,
+        "page": 1,
+        books: [
+            {
+                "isbn": "...",
+                "created_at": "2015-02-16 00:00:00",
+                "updated_at": "2015-02-16 00:00:00",
+                ...
+                voter: [
+                    {
+                        "member_id": "20xx2323",
+                        ...
+                    }
+                ]
+            }, 
+            ...
+        ]
+    }
+
+    or
+
+    "no_page" | "invalid_pmax" | "no_sort" | "no_sort_field" | "illegal_request"`
+
+```
+
+####Insert book in wunder list
+```json
+method: POST
+
+uri: /wunderlist/edit
+
+para:
+required:
+    isbn: string
+    _xsrf: string in cookie
+
+optional:
+    title: string,
+    alt: 豆瓣链接
+    author: array,
+    publisher: 出版社,
+    image: 豆瓣图片链接,
+    tags: 标签,
+    pub_date: 出版时间
+
+return:
+    errmsg: "no_isbn",
+    errcode: 1
+    // 已购买
+    errcode: 1,
+    errmsg: "book_got"
+    // 已存在在清单里
+    errcode: 1,
+    errmsg: "book_exist"
+    // 成功
+    errcode 0
+```
+
+####Vote in wunder list
+```json
+method: GET
+
+uri: /wunderlist/vote?isbn=isbn_code
+Ex: /wunderlist/vote?isbn=1234567890123
+
+return:
+    // 成功
+    errcode: 0
+    
+    or
+    
+    errmsg: "no_isbn",
+    errcode: 1
+    
+    or 
+    
+    errmsg: "already_vote
+    errcode: 1
 ```
 
 

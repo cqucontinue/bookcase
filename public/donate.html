@@ -2,18 +2,17 @@
 <html>
 <head>
   <title>Continue-donate</title>
-  <link rel="stylesheet" href="css/public.css" />
-  <script src="js/checkLogin.js"></script>
-  
+  <link rel="stylesheet" href="/static/css/public.css" />
+  <script src="/static/js/checkLogin.js"></script> 
 </head>
 <body id="donate-page">
   <header id="public-head">
     <div id="header-content">
-      <img id="logo" src="imgs/donate-logo.png" />
-      <nav id="public-nav">
-        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="javascript:;" target="_self">DONATE</a>|<a class="wonderlist" href="javascript:;" target="_self">WONDUWELIST</a>
-      </nav>
+      <img id="logo" src="/static/imgs/donate-logo.png" />
       <div id="personal-inf"></div>
+      <nav id="public-nav">
+        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="donate.html" target="_self">DONATE</a>|<a class="wonderlist" href="wunderlist.html" target="_self">WUNDERLIST</a>
+      </nav>
     </div>
   </header>
   <content id="donate-content">
@@ -39,7 +38,7 @@
       <button type="submit" id="donate-identify">确认捐献</button>
     </div>
   </content>
-  <script src="js/jquery-1.8.3.min.js"></script>
-  <script src="js/index.js"></script>
+  <script src="/static/js/jquery.js"></script>
+  <script src="/static/js/index.js"></script>
 </body>
 </html>
