@@ -36,7 +36,7 @@ class ImageHandler(tornado.web.RequestHandler):
             return
 
         meta = self.request.files['image'][0]
-        upload_path = "/home/gavin/Desktop/113bookcase/book-collection/imgs/avatar/"
+        upload_path = "/book-collection/public/imgs"
         filename = meta['filename']
 
         # 判断图片大小
