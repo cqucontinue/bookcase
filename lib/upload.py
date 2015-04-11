@@ -104,6 +104,16 @@ class ImageHandler(tornado.web.RequestHandler):
             new_filename = time + suffix
             new_image_path = os.path.join(upload_path,new_filename)
             os.rename(image_path,new_image_path)
+	    upload_success = {
+			"errcode": 0
+	    }
+	    self.write(upload_success)
+	else:
+	    not_find = {
+			"errmsg":"not find image_file",
+			"errcode": 1
+	    }
+	    self.write(not_find)
         
 
 if __name__ == '__main__':

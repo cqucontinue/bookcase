@@ -19,7 +19,6 @@ if __name__ == "__main__":
     define("coll_members", default="members", help="basic member information collection")
     
 class Application(tornado.web.Application):
-
     def __init__(self):
         
         handlers = [(r"/changeinfo",InfoHandler)]
@@ -32,7 +31,6 @@ class Application(tornado.web.Application):
         
         
 class InfoHandler(BaseHandler):
-
     def post(self):
 
         coll = self.application.db[options.coll_members]
@@ -59,6 +57,12 @@ class InfoHandler(BaseHandler):
         member["created"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
         member["last_updated"] = datetime.now().__format__("%Y-%m-%d %H:%M:%S")
         coll.save(member)
+
+	change_success = {
+		"errcode": 0
+	}
+	self.write(change_success)
+
             
 if __name__ == '__main__':
     tornado.options.parse_command_line()
