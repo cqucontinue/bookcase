@@ -303,7 +303,7 @@ return:
     errcode: 1
 ```
 
-###upload images
+###Upload images
 ```json
 method: POST
 
@@ -333,7 +333,7 @@ return
     //成功
 ```
 
-###change personal information
+###Change personal information
 ```json
 method: POST
 
