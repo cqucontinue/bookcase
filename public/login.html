@@ -3,16 +3,17 @@
 <head>
   <title>Continue-login</title>
   <link rel="stylesheet" href="/static/css/public.css" />
+  <script src="/static/js/jquery.js"></script>
   <script src="/static/js/checkLogin.js"></script>
 </head>
 <body id="login-page">
   <div id="login-content">
-    <img id="login-logo" src="/static/imgs/login-logo.jpg" />
-    <div id="login-tip" style="display:none"></div>
+    <img class="login-logo" src="/static/imgs/login-logo.jpg" />
+    <div class="login-tip" style="display:none"></div>
     <form id="input-content">
-      <input id="username" placeholder="用户名" />
-      <input id="password" type="password" placeholder="密码" />
-      <button id="login-buttom" type="button">登录</button>
+      <input class="username" placeholder="用户名" />
+      <input class="password" type="password" placeholder="密码" />
+      <button class="login-buttom" type="button">登录</button>
     </form>
   </div>
   <script src="/static/js/index.js"></script>

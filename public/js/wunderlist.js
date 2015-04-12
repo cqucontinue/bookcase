@@ -32,144 +32,6 @@ popOrder.onclick = function () {
     listenTurnOpetation(sortWay);
 }
 
-function Wunderlist() {
-    // create a new node
-    var bookInfNode = document.createElement('div');
-    bookInfNode.className = "book-inf";
-
-    var detailHTML = '<img class="cover" /><div class="details"><span class="title inf">书名： <span></span></span><span class="author inf">作者： <span></span></span><span class="publisher inf">出版社： <span></span></span><span class="publish-time inf">出版时间： <span></span></span><span class="isbn inf">ISBN： <span></span></span><a class="get-more" href="javascript:;" target="_blank">了解更多</a></div>'
-    bookInfNode.innerHTML = detailHTML;
-
-    // infmation
-    this.image = "";
-    this.title = "";
-    this.author = "";
-    this.publisher = "";
-    this.pubDate = "";
-    this.isbn = "";
-    this.alt = "";
-    this.createTime = "";
-    this.tags = [];
-
-    this.voteCount = 0;
-    this.voter = [];
-
-    this.node = bookInfNode;
-}
-
-Wunderlist.prototype.show = function () {
-    
-    // basic node
-    this.node.getElementsByClassName('cover')[0].setAttribute("src", this.image);
-    this.node.getElementsByClassName('get-more')[0].setAttribute("href", this.alt);
-
-    this.node.getElementsByClassName('title')[0].lastChild.innerText
-        = this.title;
-    this.node.getElementsByClassName('author')[0].lastChild.innerText
-        = this.author;
-    this.node.getElementsByClassName('publisher')[0].lastChild.innerText
-        = this.publisher;
-    this.node.getElementsByClassName('publish-time')[0].lastChild.innerText
-        = this.pubDate;
-    this.node.getElementsByClassName('isbn')[0].lastChild.innerText
-        = this.isbn;
-
-    // specail node
-    this.handleSpecialNode();
-
-    // show
-    !boolAddWunder && document.getElementById('wunder-list').appendChild(this.node);
-    boolAddWunder && document.getElementById('show-block').appendChild(this.node);
-
-}
-
-//
-// There have some special node in diffrent page
-//
-Wunderlist.prototype.handleSpecialNode = function () {
-    var objWunder = this;
-
-    // if the page is add-wunderlist.html
-    if (boolAddWunder == true) {
-        // create a botton
-        var button = document.createElement('button');
-        button.innerText = ' + 添加 ';
-        button.className = 'submit-add-wunder';
-
-        // add Listen to this button
-        button.onclick = function () {
-            submitWunder(objWunder);
-        };
-
-        // append this node
-        //this.node.appendChild(button);
-        this.node.insertBefore(button, this.node.firstChild);
-    }
-
-    // if the page is wunderlist.html
-    if (boolAddWunder == false) {
-
-        var otherInf = document.createElement('div');
-        otherInf.className = 'other-inf';
-
-        var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span>';
-        otherInf.innerHTML = otherInfHTML;
-
-        // insert HTML
-        this.node.appendChild(otherInf);
-
-        // add like botton
-        var butLike = document.createElement('img');
-        butLike.className = 'want-ico';
-        // listen to LIKE event, if didn't vote before
-        if (hadVoted(objWunder)) {
-            butLike.src = '/static/imgs/had-want-icon.png';
-            butLike.style.cursor = 'not-allowed';
-            butLike.onclick = function () {
-                // do nothing;
-            }
-        }
-        else if (!hadVoted(objWunder)) {
-            butLike.src = '/static/imgs/want-icon.png';
-            butLike.onclick = function () {
-                submitVote(objWunder);
-            }
-        }
-
-        otherInf.getElementsByClassName('want-too')[0].appendChild(butLike);
-
-        // add vote count
-        var voteCount = document.createElement('span');
-        voteCount.className = 'vote-count';
-        voteCount.innerText = this.voteCount || '';
-
-        otherInf.getElementsByClassName('want-too')[0].appendChild(voteCount);
-
-        // add want-too-list
-        var wantList = document.createElement('span');
-        wantList.className = 'want-too-list inf';
-
-        var wantListStr = '';
-        var wantListLength = this.voter.length;
-        for (var i = wantListLength - 1; i >= 0 && (wantListLength - i) <= 3; --i) {
-            wantListStr += this.voter[i].fullname;
-            if ((wantListLength <= 3 && i != 0) || 
-                (wantListLength > 3 && (wantListLength - i) != 3)) {
-                wantListStr += '、';
-            }
-        }
-        if (wantListLength > 3) {
-            wantListStr += '等人也想看';
-        } else {
-            wantListStr += '也想看'
-        }
-        // update the innerText
-        wantList.innerText = wantListStr;
-
-        otherInf.appendChild(wantList);
-    }
-}
-
 //
 // when want to add a book to wunderlist
 //
@@ -244,7 +106,7 @@ function submitVote(objBook) {
     xhr.send();
 }
 
-function showWunderlist(res) {
+function showList(res) {
 
     // if something wrong
     if (res.errcode && res.errcode == 1) {
@@ -260,7 +122,6 @@ function showWunderlist(res) {
     res = (res.books || res);
     // the number of wunderlist
     var count = res.length;
-    console.log(count);
     // if there is no book
     if (count == 0) {
         var errTip = document.getElementsByClassName('err-tip')[0];
@@ -271,7 +132,7 @@ function showWunderlist(res) {
     }
 
     for (var i = 0; i < count; ++i) {
-        var temp = new Wunderlist();
+        var temp = new Book();
         temp.image = res[i].image;
         temp.title = res[i].title;
         temp.author = res[i].author; // TODO: author is a array
@@ -383,21 +244,11 @@ function handleWunderlistAdd() {
                 //ajaxSend: function () {
                     
                 //},
-                success: function (json) {
-                    document.getElementById('searching-tip').style.display = 'none';
-                    showWunderlist(json)
-                },
-                error: function () {
-                    
-                }
+            })
+            .done(function (resData) {
+                document.getElementById('searching-tip').style.display = 'none';
+                showList(resData);
             });
-            //.done(function (data) {
-            //    document.getElementById('searching-tip').style.display = 'none';
-            //    showWunderlist(data);
-            //})
-            //.fail(function () {
-            //    alert('fail');
-            //});
         }
     }
 }
@@ -414,7 +265,7 @@ function getWunderlist(turnedPage, sort) {
 
     xhr.onload = function () {
         var res = JSON.parse(xhr.responseText);
-        showWunderlist(res);
+        showList(res);
     }
 
     xhr.open('get', url, false); // synchronous

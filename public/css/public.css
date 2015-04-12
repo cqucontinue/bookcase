@@ -27,14 +27,14 @@ a {
     box-shadow: 2px -2px  3px 1px rgba(0,0,0,0.2);
 }
 
-#login-logo {
+#login-content .login-logo {
     display: block;
     margin: 43px auto 33px auto;
     width: 201px;
     height: 87px;
 }
 
-#login-tip {
+#login-content .login-tip {
     width: 247px;
     margin: 0 auto 20px auto;
     height: 14px;
@@ -42,21 +42,21 @@ a {
     color: #ff0000;
 }
 
-#login-page #input-content {
+#login-content #input-content {
     margin: 0 auto 65px auto;
     width: 247px;
     height: auto;
 }
 
-#login-page input {
+#login-content input {
     color: #667580;
     display: block;
 }
-#login-page input:focus {
+#login-content input:focus {
     outline-color: rgba(0, 0, 0, 0);
 }
 
-#login-page #username, #login-page #password {
+#login-content .username, .password {
     width: 232px;
     height: 17px;
     margin-bottom: 23px;
@@ -65,7 +65,7 @@ a {
 
 }
 
-#login-buttom {
+#login-content .login-buttom {
     display: block;
     margin: 43px auto auto auto;
     width: 80px;
@@ -80,7 +80,7 @@ a {
     box-shadow: none;
     cursor: pointer;
 }
-#login-buttom:focus {
+#login-content .login-buttom:focus {
     outline-color: rgba(0, 0, 0, 0);
 }
 

@@ -1,5 +1,4 @@
 ﻿
-
 // 
 // choose which part of js code execute
 //
@@ -19,11 +18,13 @@ switch (pageTitle) {
 //
 function handleLoginPage() {
 
-    var submit = document.getElementById('login-buttom');
-    
+    // submit bottom
+    var submit = $('.login-buttom');
 
-    var passwordNode = document.getElementById('password');
-    passwordNode.onfocus = function () {
+    var passwordNode = $('.password');
+
+    // listen to Enter key
+    passwordNode.focus(function () {
         this.onkeydown = function (event) {
             var e = event || window.event;
 
@@ -32,15 +33,16 @@ function handleLoginPage() {
                 submitLoginReq();
             }
         }
-    }
-    submit.onclick = function () {
+    });
+    // listen to Submit bottom
+    submit.click(function () {
         submitLoginReq();
-    }
+    })
 }
 
 var bookInf = {};
 //
-//
+// work for donate.html
 //
 function handleDonatePage() {
 
@@ -51,9 +53,6 @@ function handleDonatePage() {
     publicNav.getElementsByClassName('donate')[0].style.color = '#0084B5';
     publicNav.getElementsByClassName('wonderlist')[0].style.color = '#767779';
 
-    alert('捐献页面还未开通，请开通后再访问');
-    location.href = '/wunderlist.html';
-    // TODO: can't access donate.html
 
     var isbnBox = document.getElementById('search-box');
 
@@ -75,13 +74,13 @@ function handleDonatePage() {
                 type: 'GET',
                 async: false,
                 dataType: 'jsonp',
-                jsonp: 'callback',
-                success: function (json) {
-                    reflashBookInf(json)
-                },
-                error: function () {
-                    alert('fail');
-                }
+                jsonp: 'callback'
+            })
+            .done(function (resData) {
+                reflashBookInf(resData);
+            })
+            .fail(function () {
+                alert('Something wrong, try again later.');
             });
         }
     }
@@ -163,41 +162,41 @@ function reflashBookInf (json) {
         bookInf.image     = json.images.large;
         bookInf.tags      = json.tags;
 
-        bookInf.donor = SubCookieUtil.get("identify", "userId");
+        bookInf.donor = CookieUtil.get("identify", "userId");
     }
     
 }
 
 
 function submitLoginReq() {
-    var tip = document.getElementById('login-tip');
+    var tip = $('.login-tip');//document.getElementById('login-tip');
 
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
+    var username = $('.username').val();
+    var password = $('.password').val();
 
     if (username == '' || password == '') {
-        tip.innerText = '请输入账号、密码。';
-        tip.style.display = 'block';
+        tip.html('请输入账号、密码。');
+        tip.slideDown('fast');
         return;
     }
 
-    var fd = new FormData();
-    fd.append('member_id', username);
-    fd.append('password', password);
-    fd.append('_xsrf', CookieUtil.get('_xsrf') || '');
-
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
+    $.ajax({
+        url: '/auth/login',
+        type: 'post',
+        async: 'true',
+        data: {
+            'member_id': username,
+            'password': password,
+            '_xsrf': CookieUtil.get('_xsrf') || ''
+        }
+    })
+    .done(function (resData) {
+        var res = resData;
         if (res.errcode && res.errcode == 1) {
-            tip.innerText = '账号或密码错误！';
-            tip.style.display = 'block';
+            tip.html('账号或密码错误！');
+            tip.slideDown('fast');
         } else {
             location.href = '/wunderlist.html';
         }
-    }
-
-    xhr.open('post', '/auth/login', true);
-    //xhr.setRequestHeader("_xsrf", CookieUtil.get('_xsrf') || '');
-    xhr.send(fd);
+    });
 }
