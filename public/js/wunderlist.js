@@ -9,74 +9,72 @@ var sortWay = 'updated_at'; // the wunderlist's sort way, default is based on up
 //
 // listetn to sort way
 //
-var timeOrder = document.getElementById('time-order');
-var popOrder = document.getElementById('pop-order');
+var timeOrder = $('#time-order');
+var popOrder = $('#pop-order');
 
-timeOrder.onclick = function () {
+timeOrder.click(function () {
 
     // change the style of order-block
-    timeOrder.style.color = '#528BB8'; // focus on time-order
-    popOrder.style.color = '#A0A0A0';
+    timeOrder.css('color', '#528BB8'); // focus on time-order
+    popOrder.css('color', '#A0A0A0');
 
     sortWay = 'updated_at';
     listenTurnOpetation(sortWay);
-}
+});
 
-popOrder.onclick = function () {
+popOrder.click(function () {
 
     // change the style of order-block
-    popOrder.style.color = '#528BB8'; // focus on pop-order
-    timeOrder.style.color = '#A0A0A0';
+    popOrder.css('color', '#528BB8'); // focus on pop-order
+    timeOrder.css('color', '#A0A0A0');
 
     sortWay = 'vote_count';
     listenTurnOpetation(sortWay);
-}
+});
 
 //
 // when want to add a book to wunderlist
 //
 function submitWunder(objWunder) {
-    //alert(objWunder.isbn);
-    var xhr = new XMLHttpRequest();
-
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
+    //CROS
+    //objWunder.bookInf._xsrf = CookieUtil.get('_xsrf') || '';
+    console.log(objWunder.bookInf)
+    $.ajax({
+        url: '/wunderlist/edit',
+        type: 'post',
+        async: true,
+        //data: objWunder.bookInf + { "_xsrf": CookieUtil.get('_xsrf') || ''}
+        data: {
+            'image': objWunder.bookInf.image,
+            'title': objWunder.bookInf.title,
+            'author': objWunder.bookInf.author[0],
+            'publisher': objWunder.bookInf.publisher,
+            'pub_date': objWunder.bookInf.pub_date,
+            'isbn': objWunder.bookInf.isbn,
+            'alt': objWunder.bookInf.alt,
+            'tags': objWunder.bookInf.tags,
+            '_xsrf': CookieUtil.get('_xsrf') || ''
+        }
+    })
+    .done(function (resData) {
+        var res = resData;
 
         if (res.errcode && res.errcode == 1) {
             // show the err tip block
-            var errTip = document.getElementById('add-wunderlist-content')
-                .getElementsByClassName('err-tip')[0];
-            errTip.style.display = 'block';
+            var errTip = $('#add-wunderlist-content .err-tip');
+            errTip.css('display', 'block');
             if (res.errmsg && res.errmsg == 'book_got') {
-                document.getElementById('err-message').innerText = '此书已有，返回并查看';
+                $('#err-message').html('此书已有，返回并查看');
             }
             else if (res.errmsg && res.errmsg == 'book_exist') {
-                document.getElementById('err-message').innerText = '此本书在愿望清单中已存在，返回并查看';
+                $('#err-message').html('此本书在愿望清单中已存在，返回并查看');
             }
         } else {
             alert('Success!');
             // turn to wunderlist.html
             location.href = '/wunderlist.html';
         }
-    }
-
-    // the data
-    var data = new FormData();
-    
-    data.append('isbn', objWunder.isbn);
-    data.append('title', objWunder.title);
-    data.append('alt', objWunder.alt);
-    data.append('author', objWunder.author);
-    data.append('publisher', objWunder.publisher);
-    data.append('pub_date', objWunder.pubDate);
-    data.append('image', objWunder.image);
-    data.append('tags', objWunder.tags);
-    // forbid cros
-    data.append('_xsrf', CookieUtil.get('_xsrf') || '');
-
-    xhr.open('post', '/wunderlist/edit', true);
-    //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
-    xhr.send(data);
+    });
 }
 
 //
@@ -84,26 +82,27 @@ function submitWunder(objWunder) {
 //
 function submitVote(objBook) {
 
-    var xhr = new XMLHttpRequest()
-    var url = '/wunderlist/vote?isbn=' + objBook.isbn;
+    var url = '/wunderlist/vote?isbn=' + objBook.bookInf.isbn;
 
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
+    $.ajax({
+        url: url,
+        type: 'get',
+        async: true
+    })
+    .done(function (resData) {
+        var res = resData;
 
         // if something wrong
         if (res.errcode && res.errcode == 1) {
+            console.log(res.errmsg);
             alert('There has something wrong! Please try agian later!');
         } else {
             // refresh the count of vote
-            // TODO: when vote success, upload a new vote-icon
-            objBook.node.getElementsByClassName('want-ico')[0].src = '/static/imgs/had-want-icon.png';
-            objBook.node.getElementsByClassName('vote-count')[0].innerText = ++objBook.voteCount;
+            // TODO: when vote success, upload some information
+            $('.want-ico', objBook.node).attr('src', '/static/imgs/had-want-icon.png');
+            $('.vote-count', objBook.node).html(++objBook.voteCount);
         }
-    }
-    xhr.onerror = function () { alert('err!');}
-
-    xhr.open('get', url, true);
-    xhr.send();
+    });
 }
 
 function showList(res) {
@@ -124,24 +123,23 @@ function showList(res) {
     var count = res.length;
     // if there is no book
     if (count == 0) {
-        var errTip = document.getElementsByClassName('err-tip')[0];
-        errTip.style.display = 'block';
-
-        var errMsg = document.getElementById('err-message');
-        errMsg.innerText = '无结果，请核对后在输入';
+        // no result
+        $('.err-tip').css('display', 'block');
+        $('#err-message').html('无结果，请核对后在输入');
     }
 
     for (var i = 0; i < count; ++i) {
+        
         var temp = new Book();
-        temp.image = res[i].image;
-        temp.title = res[i].title;
-        temp.author = res[i].author; // TODO: author is a array
-        temp.publisher = res[i].publisher;
-        temp.pubDate = res[i].pub_date || res[i].pubdate;
-        temp.alt = res[i].alt;
-        temp.createTime = res[i].create_at || '';
-        temp.isbn = res[i].isbn13 || res[i].isbn;
-        temp.tags = res[i].tags;
+        temp.bookInf.image = res[i].image;
+        temp.bookInf.title = res[i].title;
+        temp.bookInf.author = res[i].author; // TODO: author is a array
+        temp.bookInf.publisher = res[i].publisher;
+        temp.bookInf.pub_date = res[i].pub_date || res[i].pubdate;
+        temp.bookInf.alt = res[i].alt;
+        temp.bookInf.createTime = res[i].create_at || '';
+        temp.bookInf.isbn = res[i].isbn13 || res[i].isbn;
+        temp.bookInf.tags = res[i].tags;
 
         // if this is for wunderlist part
         res[i].vote_count && (temp.voteCount = res[i].vote_count);
@@ -170,36 +168,35 @@ switch (pageTitle) {
 
 function handleWunderlistPage() {
     // change the style of nav
-    var publicNav = document.getElementById('public-nav');
-    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
-
+    $('#public-nav .borrow').css('color', '#767779');
+    $('#public-nav .donate').css('color', '#767779');
+    $('#public-nav .wunderlist').css('color', '#0084B5');
+    
     // listen to add-wunderlist-block occupied
-    var addWunder = document.getElementById('my-wunderlist');
-    addWunder.onclick = function () {
+    //var addWunder = document.getElementById('my-wunderlist');
+    var addWunder = $('#my-wunderlist');
+    addWunder.click(function () {
 
         // hidden the err tip block
-        document.getElementById('add-wunderlist-content')
-            .getElementsByClassName('err-tip')[0].style.display = 'none';
-
-        var addWunderCotent = document.getElementById('add-wunderlist-content');
-        addWunderCotent.style.display = 'block';
+        $('#add-wunderlist-content .err-tip').css('display', 'none');
+        var addWunderContent = $('#add-wunderlist-content');
+        addWunderContent.css('display', 'block');
 
         // clean
-        cleanAllChilden(document.getElementById('show-block'));
+        cleanAllChilden($('#show-block'));
+        // TODO: cleanAllChilden
 
         boolAddWunder = true;
         // listen to handleWunderlistAdd
         handleWunderlistAdd();
 
         // listen to shot down add wunderlist
-        var shotDown = document.getElementById('shot-down-add-wunder');
-        shotDown.onclick = function () {
+        var shotDown = $('#shot-down-add-wunder');
+        shotDown.click(function () {
             boolAddWunder = false;
-            addWunderCotent.style.display = 'none';
-        }
-    }
+            addWunderContent.css('display', 'none');
+        });
+    });
 
     // listen to some operator like next, prev
     listenTurnOpetation(sortWay); // default sortWay = updated_at
@@ -211,46 +208,50 @@ function handleWunderlistPage() {
 //
 function handleWunderlistAdd() {
     var isbnBox = document.getElementById('add-wunder-search');
+    var isbnBox = $('#add-wunder-search');
 
-    isbnBox.onfocus = function () {
+    isbnBox.focus(function () {
         // lister to Enter when focus on search-box 
-        this.onkeydown = function (event) {
+        $(this).keydown(function (event) {
 
             // hidden err when input agian
-            var errTip = document.getElementsByClassName('err-tip')[0];
-            errTip.style.display = 'none';
+            $('.err-tip').css('display', 'none');
 
             var e = event || window.event;
 
             // if not Enter key, return
             if (e && e.keyCode != 13) return;
 
-            document.getElementById('searching-tip').style.display = 'block';
+            $('#searching-tip').css('display', 'block');
             // remove all node that searched just now
-            var father = document.getElementById('show-block');
-            cleanAllChilden(father);
+            cleanAllChilden($('#show-block'));
 
-            var isbnCode = isbnBox.value;
+            // submit
+            submitWunderlistAdd(isbnBox.val());
+        });
+    });
+}
 
-            var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=10';
+function submitWunderlistAdd(_isbn) {
+    var isbnCode = _isbn;
 
-            // CROS
-            $.ajax({
-                url: url,
-                type: 'GET',
-                async: false,
-                dataType: 'jsonp',
-                jsonp: 'callback',
-                //ajaxSend: function () {
-                    
-                //},
-            })
-            .done(function (resData) {
-                document.getElementById('searching-tip').style.display = 'none';
-                showList(resData);
-            });
-        }
-    }
+    var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=10';
+
+    // CROS
+    $.ajax({
+        url: url,
+        type: 'GET',
+        async: false,
+        dataType: 'jsonp',
+        jsonp: 'callback',
+        //ajaxSend: function () {
+
+        //},
+    })
+    .done(function (resData) {
+        document.getElementById('searching-tip').style.display = 'none';
+        showList(resData);
+    });
 }
 
 
@@ -259,17 +260,19 @@ function handleWunderlistAdd() {
 //
 function getWunderlist(turnedPage, sort) {
     // send wunderlist require
-    var xhr = new XMLHttpRequest();
     var url = '/wunderlist/get?' + 'page=' + turnedPage
         + '&' + 'sort=' + sort;
 
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
+    $.ajax({
+        url: url,
+        type: 'get',
+        async: false
+    })
+    .done(function (resData) {
+        // TODO: why
+        var res = JSON.parse(resData);
         showList(res);
-    }
-
-    xhr.open('get', url, false); // synchronous
-    xhr.send();
+    })
 }
 
 
@@ -279,57 +282,53 @@ function getWunderlist(turnedPage, sort) {
 function listenTurnOpetation(_sortWay) {
 
     // clean page
-    cleanAllChilden(document.getElementById('wunder-list')); 
+    cleanAllChilden($('#wunder-list')); 
     // get the first page of wunderlist
     getWunderlist(1, _sortWay);
     // uppdate
     updatePages();
 
     // next page
-    var nextPage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('next-page')[0];
-    nextPage.onclick = function () {
+    var nextPage = $('#wunderlist-content .next-page');
+    nextPage.click(function () {
         if (currPage == allPages) {
             alert('This is the last page!');
             return;
         }
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        cleanAllChilden($('#wunder-list')); // clean page
         getWunderlist(++currPage, _sortWay);
         updatePages();
-    }
+    });
 
     // prev page
-    var prePage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('pre-page')[0];
-    prePage.onclick = function () {
+    var prePage = $('#wunderlist-content .pre-page');
+    prePage.click(function () {
         if (currPage == 1) {
             alert('This is the first page!');
             return;
         }
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        cleanAllChilden($('#wunder-list')); // clean page
         getWunderlist(--currPage, _sortWay);
         updatePages();
-    }
+    })
 
     // first page
-    var firstPage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('first-page')[0];
-    firstPage.onclick = function () {
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+    var firstPage = $('#wunderlist-content .first-page');
+    firstPage.click(function () {
+        cleanAllChilden($('#wunder-list')); // clean page
         currPage = 1;
         getWunderlist(currPage, _sortWay);
         updatePages();
-    }
+    });
 
     // last page
-    var lastPage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('last-page')[0];
-    lastPage.onclick = function () {
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+    var lastPage = $('#wunderlist-content .last-page');
+    lastPage.click(function () {
+        cleanAllChilden($('#wunder-list')); // clean page
         currPage = allPages;
         getWunderlist(currPage, _sortWay);
         updatePages();
-    }
+    });
     
 }
 
@@ -337,10 +336,10 @@ function listenTurnOpetation(_sortWay) {
 // clean all of childen under the node
 //
 function cleanAllChilden(father) {
-    var childen = father.childNodes;
+    var childen = father.children();
     var childenLength = childen.length;
     for (var i = 0; i < childenLength; ++i) {
-        father.removeChild(childen[0]);  // there have some problem
+        childen[i].remove();  // there have some problem
     }
 }
 
@@ -348,11 +347,8 @@ function cleanAllChilden(father) {
 // update the count of curr page and total page
 //
 function updatePages() {
-    var curr = document.getElementById('wunderlist-content').getElementsByClassName('curr')[0];
-    curr.innerText = currPage;
-
-    var total = document.getElementById('wunderlist-content').getElementsByClassName('total')[0];
-    total.innerText = allPages;
+    $('#wunderlist-content .curr').html(currPage);
+    $('#wunderlist-content .total').html(allPages);
 }
 
 //
