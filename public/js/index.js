@@ -40,133 +40,30 @@ function handleLoginPage() {
     })
 }
 
-var bookInf = {};
 //
 // work for donate.html
 //
 function handleDonatePage() {
-
-    
     // change the style of nav
-    var publicNav = document.getElementById('public-nav');
-    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('donate')[0].style.color = '#0084B5';
-    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#767779';
+    $('#public-nav .borrow').css('color', '#767779');
+    $('#public-nav .donate').css('color', '#0084B5');
+    $('#public-nav .wunderlist').css('color', '#767779');
 
+    var isbnBox = $('#search-box');
 
-    var isbnBox = document.getElementById('search-box');
-
-    isbnBox.onfocus = function () {
+    isbnBox.focus(function () {
         // lister to Enter when focus on search-box 
-        this.onkeydown = function (event) {
+        $(this).keydown(function (event) {
             var e = event || window.event;
 
             // if not Enter key, return
             if (e && e.keyCode != 13) return;
-            
-            var isbnCode = isbnBox.value;
-            
-            var url = 'https://api.douban.com/v2/book/isbn/' + isbnCode;
+            // get book from douban
+            getDonateBook(isbnBox.val());
 
-            // CROS
-            $.ajax({
-                url: url,
-                type: 'GET',
-                async: false,
-                dataType: 'jsonp',
-                jsonp: 'callback'
-            })
-            .done(function (resData) {
-                reflashBookInf(resData);
-            })
-            .fail(function () {
-                alert('Something wrong, try again later.');
-            });
-        }
-    }
-
-    // click submit
-    var donateSubmit = document.getElementById('donate-identify');
-
-    donateSubmit.onclick = function () {
-        if (!bookInf.isbn) {
-            alert("请正确输入所捐书籍的ISBN");
-            return;
-        } else {
-            var xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-
-                var res = JSON.parse(xhr.responseText);
-                // if err
-                if (res.errcode == 1) {
-                    alert("失败");
-                } else {
-                    alert("捐赠成功！");
-                    location.href = '/donate.html';
-                }
-            }
-
-            // remark the book inf 
-            var data = new FormData();
-            data.append('isbn', bookInf.isbn);
-            data.append('title', bookInf.title);
-            data.append('alt', bookInf.alt);
-            data.append('author', bookInf.author);
-            data.append('publisher', bookInf.publisher);
-            data.append('pub_date', bookInf.pubDate);
-            data.append('image', bookInf.image);
-            data.append('tags', bookInf.tags);
-            data.append('donor', bookInf.donor);
-            // forbid cros
-            data.append('_xsrf', CookieUtil.get('_xsrf') || '');
-
-            //Object.toString(bookInf)
-            xhr.open('post', '/book/edit', true);
-            //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
-            xhr.send(data);
-            //
-        }
-    }
+        });
+    });
 }
-
-function reflashBookInf (json) {
-
-    // if not found this book
-    if (json.msg && json.msg == 'book_not_found') {
-        return;
-    } else {
-        // reflash the inf on web
-        var bookInfNode = document.getElementsByClassName('book-inf')[0];
-
-        bookInfNode.getElementsByClassName('cover')[0].setAttribute("src", json.images.large);
-        bookInfNode.getElementsByClassName('get-more')[0].setAttribute("href", json.alt);
-
-        bookInfNode.getElementsByClassName('title')[0].lastChild.innerText
-            = json.title;
-        bookInfNode.getElementsByClassName('author')[0].lastChild.innerText
-            = json.author[0];
-        bookInfNode.getElementsByClassName('publisher')[0].lastChild.innerText
-            = json.publisher;
-        bookInfNode.getElementsByClassName('publish-time')[0].lastChild.innerText
-            = json.pubdate;
-        bookInfNode.getElementsByClassName('isbn')[0].lastChild.innerText
-            = json.isbn13 || json.isbn10;
-        
-        // store the book inf
-        bookInf.isbn      = json.isbn13;
-        bookInf.title     = json.title;
-        bookInf.alt       = json.alt;
-        bookInf.author    = json.author;
-        bookInf.publisher = json.publisher;
-        bookInf.pubDate   = json.pubdate;
-        bookInf.image     = json.images.large;
-        bookInf.tags      = json.tags;
-
-        bookInf.donor = CookieUtil.get("identify", "userId");
-    }
-    
-}
-
 
 function submitLoginReq() {
     var tip = $('.login-tip');//document.getElementById('login-tip');
@@ -197,6 +94,54 @@ function submitLoginReq() {
             tip.slideDown('fast');
         } else {
             location.href = '/wunderlist.html';
+        }
+    });
+}
+
+function getDonateBook(isbnCode) {
+
+    var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=1';
+
+    // CROS
+    $.ajax({
+        url: url,
+        type: 'GET',
+        async: false,
+        dataType: 'jsonp',
+        jsonp: 'callback'
+    })
+    .done(function (resData) {
+        showList(resData);
+    })
+    .fail(function () {
+        alert('Something wrong, try again later.');
+    });
+}
+
+function submitDonateReq(_objBook) {
+
+    var sendData = _objBook.bookInf;
+    // add some needed
+    sendData.donor = CookieUtil.get("identify", "userId");
+    sendData._xsrf = CookieUtil.get('_xsrf') || '';
+    // change the method that an array to send
+    sendData.author = JSON.stringify(_objBook.bookInf.author);
+    sendData.tags = JSON.stringify(_objBook.bookInf.tags);
+
+    $.ajax({
+        url: '/book/edit',
+        type: 'post',
+        async: true,
+        data: sendData,
+    })
+    .done(function (resData) {
+        var res = resData;
+        // if err
+        if (res.errcode == 1) {
+            alert("失败");
+        } else {
+            alert("捐赠成功！");
+            location.href = '/donate.html';
         }
     });
 }

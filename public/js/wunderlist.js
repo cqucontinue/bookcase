@@ -35,26 +35,32 @@ popOrder.click(function () {
 //
 // when want to add a book to wunderlist
 //
-function submitWunder(objWunder) {
-    //CROS
-    //objWunder.bookInf._xsrf = CookieUtil.get('_xsrf') || '';
-    console.log(objWunder.bookInf)
+function submitWunder(_objBook) {
+    
+    var sendData = _objBook.bookInf;
+    // add some needed CROS
+    sendData._xsrf = CookieUtil.get('_xsrf') || '';  
+    //// change the method that an array to send
+    sendData.author = JSON.stringify(_objBook.bookInf.author);
+    sendData.tags = JSON.stringify(_objBook.bookInf.tags);
+
     $.ajax({
         url: '/wunderlist/edit',
         type: 'post',
         async: true,
         //data: objWunder.bookInf + { "_xsrf": CookieUtil.get('_xsrf') || ''}
-        data: {
-            'image': objWunder.bookInf.image,
-            'title': objWunder.bookInf.title,
-            'author': objWunder.bookInf.author[0],
-            'publisher': objWunder.bookInf.publisher,
-            'pub_date': objWunder.bookInf.pub_date,
-            'isbn': objWunder.bookInf.isbn,
-            'alt': objWunder.bookInf.alt,
-            'tags': objWunder.bookInf.tags,
-            '_xsrf': CookieUtil.get('_xsrf') || ''
-        }
+        //data: {
+        //    'image': objWunder.bookInf.image,
+        //    'title': objWunder.bookInf.title,
+        //    'author': objWunder.bookInf.author[0],
+        //    'publisher': objWunder.bookInf.publisher,
+        //    'pub_date': objWunder.bookInf.pub_date,
+        //    'isbn': objWunder.bookInf.isbn,
+        //    'alt': objWunder.bookInf.alt,
+        //    'tags': JSON.stringify(objWunder.bookInf.tags), // TODO: 
+        //    '_xsrf': CookieUtil.get('_xsrf') || ''
+        //}
+        data: sendData
     })
     .done(function (resData) {
         var res = resData;
@@ -103,52 +109,6 @@ function submitVote(objBook) {
             $('.vote-count', objBook.node).html(++objBook.voteCount);
         }
     });
-}
-
-function showList(res) {
-
-    // if something wrong
-    if (res.errcode && res.errcode == 1) {
-        alert("Something wrong!");
-        return;
-    }
-    // refresh the total pages
-    allPages = res.pages;
-
-    //if (pageTitle == 'Continue-add-wunderlist') {
-    //    res = res.books;
-    //}
-    res = (res.books || res);
-    // the number of wunderlist
-    var count = res.length;
-    // if there is no book
-    if (count == 0) {
-        // no result
-        $('.err-tip').css('display', 'block');
-        $('#err-message').html('无结果，请核对后在输入');
-    }
-
-    for (var i = 0; i < count; ++i) {
-        
-        var temp = new Book();
-        temp.bookInf.image = res[i].image;
-        temp.bookInf.title = res[i].title;
-        temp.bookInf.author = res[i].author; // TODO: author is a array
-        temp.bookInf.publisher = res[i].publisher;
-        temp.bookInf.pub_date = res[i].pub_date || res[i].pubdate;
-        temp.bookInf.alt = res[i].alt;
-        temp.bookInf.createTime = res[i].create_at || '';
-        temp.bookInf.isbn = res[i].isbn13 || res[i].isbn;
-        temp.bookInf.tags = res[i].tags;
-
-        // if this is for wunderlist part
-        res[i].vote_count && (temp.voteCount = res[i].vote_count);
-        
-        temp.voter = res[i].voter;
-
-        // show
-        temp.show();
-    }
 }
 
 // start
@@ -330,17 +290,6 @@ function listenTurnOpetation(_sortWay) {
         updatePages();
     });
     
-}
-
-//
-// clean all of childen under the node
-//
-function cleanAllChilden(father) {
-    var childen = father.children();
-    var childenLength = childen.length;
-    for (var i = 0; i < childenLength; ++i) {
-        childen[i].remove();  // there have some problem
-    }
 }
 
 //

@@ -231,7 +231,7 @@ a {
     overflow: hidden;
 }
 
-#donate-tip {
+.donate-tip {
     display: block;
     margin: 188px auto 19px 145px;
     float: left;
@@ -241,7 +241,7 @@ a {
     font-size: 12px;
 }
 
-#donate-identify {
+.donate-identify {
     display: block;
     margin: auto 39px auto auto;
     /*bottom: 0;*/
