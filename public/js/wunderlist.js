@@ -5,6 +5,93 @@ var currPage = 1; // use to mark curr page
 var allPages = 1; // use to mark total count of pages
 var sortWay = 'updated_at'; // the wunderlist's sort way, default is based on update time
 
+/***********************************************************
+ * 
+ *
+ ***********************************************************/
+function AddWunderBook() {
+    Book.call(this); // for interitance
+}
+inheritPrototype(AddWunderBook, Book);
+
+AddWunderBook.prototype.showList = function () {
+    // basic inf show
+    this.show();
+    var objBook = this;
+
+    // create an add book botton
+    var button = $('<button> + 添加 </button>')
+    button.addClass('submit-add-wunder');
+
+    // add Listen to this button
+    button.click(function () {
+        submitWunder(objBook);
+    });
+
+    // append this node
+    button.insertBefore(this.node.children(':first'));
+}
+
+function WunderBook() {
+    Book.call(this);  // for interitance
+
+    this.voteCount = 0;
+    this.voter = [];
+}
+inheritPrototype(WunderBook, Book);
+
+WunderBook.prototype.showList = function () {
+    // basic inf show
+    this.show();
+    var objBook = this;
+
+    var otherInf = $('<div></div>');
+    otherInf.addClass('other-inf');
+
+    var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span>';
+    otherInf.append(otherInfHTML);
+
+    // insert HTML
+    this.node.append(otherInf);
+
+    // add like botton
+    var butLike = $('<img />');
+    butLike.addClass('want-ico');
+
+    // listen to LIKE event, if didn't vote before
+    if (hadVoted(this)) {
+        butLike.attr('src', '/static/imgs/had-want-icon.png');
+        butLike.css('cursor', 'not-allowed');
+        butLike.click(function () {
+            return;
+            // do nothing;
+        });
+    }
+    else if (!hadVoted(this)) {
+        butLike.attr('src', '/static/imgs/want-icon.png')
+        butLike.css('cursor', 'pointer');
+        butLike.click(function () {
+            submitVote(objBook);
+        });
+    }
+
+    // add vote count
+    var voteCount = $('<span></span>');
+    voteCount.addClass('vote-count');
+    voteCount.html(this.voteCount || '');
+
+    // add want-too-list
+    var wantList = $('<span></span>');
+    wantList.addClass('want-too-list').addClass('inf');
+
+    $('.want-too', otherInf).append(butLike);
+    $('.want-too', otherInf).append(voteCount)
+
+    // update the innerText
+    wantList.html(wantListStr(this.voter));
+
+    otherInf.append(wantList);
+}
 
 //
 // listetn to sort way
@@ -48,18 +135,6 @@ function submitWunder(_objBook) {
         url: '/wunderlist/edit',
         type: 'post',
         async: true,
-        //data: objWunder.bookInf + { "_xsrf": CookieUtil.get('_xsrf') || ''}
-        //data: {
-        //    'image': objWunder.bookInf.image,
-        //    'title': objWunder.bookInf.title,
-        //    'author': objWunder.bookInf.author[0],
-        //    'publisher': objWunder.bookInf.publisher,
-        //    'pub_date': objWunder.bookInf.pub_date,
-        //    'isbn': objWunder.bookInf.isbn,
-        //    'alt': objWunder.bookInf.alt,
-        //    'tags': JSON.stringify(objWunder.bookInf.tags), // TODO: 
-        //    '_xsrf': CookieUtil.get('_xsrf') || ''
-        //}
         data: sendData
     })
     .done(function (resData) {
@@ -204,9 +279,6 @@ function submitWunderlistAdd(_isbn) {
         async: false,
         dataType: 'jsonp',
         jsonp: 'callback',
-        //ajaxSend: function () {
-
-        //},
     })
     .done(function (resData) {
         document.getElementById('searching-tip').style.display = 'none';

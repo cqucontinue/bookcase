@@ -1,15 +1,20 @@
-﻿
+﻿// Prototypal Inheritance in JavaScript
+function object(o) {
+    function F() { }
+    F.prototype = o;
+    return new F();
+}
+// Parasitic combined inheritance
+function inheritPrototype(subType, superType) {
+    var prototype = object(superType.prototype);
+    prototype.constructor = subType;
+    subType.prototype = prototype;
+}
+
+
+
 function Book() {
-    // create a new node
-    var bookInfNode = $('<div></div>')//document.createElement('div');
-    //bookInfNode.className = "book-inf";
-    bookInfNode.attr('class', 'book-inf');
-
-    var detailHTML = '<img class="cover" /><div class="details"><span class="title inf">书名： <span></span></span><span class="author inf">作者： <span></span></span><span class="publisher inf">出版社： <span></span></span><span class="publish-time inf">出版时间： <span></span></span><span class="isbn inf">ISBN： <span></span></span><a class="get-more" href="javascript:;" target="_blank">了解更多</a></div>'
-    //bookInfNode.innerHTML = detailHTML;
-    bookInfNode.append(detailHTML);
-
-    // infmation
+    // basic infmation
     this.bookInf = {
         image: '',
         title: '',
@@ -21,8 +26,12 @@ function Book() {
         tags: []
     }
 
-    this.voteCount = 0;
-    this.voter = [];
+    // create a new node
+    var bookInfNode = $('<div></div>');
+    bookInfNode.attr('class', 'book-inf');
+
+    var detailHTML = '<img class="cover" /><div class="details"><span class="title inf">书名： <span></span></span><span class="author inf">作者： <span></span></span><span class="publisher inf">出版社： <span></span></span><span class="publish-time inf">出版时间： <span></span></span><span class="isbn inf">ISBN： <span></span></span><a class="get-more" href="javascript:;" target="_blank">了解更多</a></div>';
+    bookInfNode.append(detailHTML);
 
     this.node = bookInfNode;
 }
@@ -39,114 +48,10 @@ Book.prototype.show = function () {
     $('.publish-time', this.node).children(":last").html(this.bookInf.pub_date);
     $('.isbn', this.node).children(":last").html(this.bookInf.isbn);
 
-    // specail node
-    this.handleSpecialNode();
-
-    // show
-    //!boolAddWunder && document.getElementById('wunder-list').appendChild(this.node);
     document.title == 'Continue-wunderlist' && !boolAddWunder && $('#wunder-list').append(this.node);
     document.title == 'Continue-wunderlist' && boolAddWunder && $('#show-block').append(this.node);
-    document.title == 'Continue-donate' && $('.show-block').append(this.node)
+    document.title == 'Continue-donate' && $('.show-block').append(this.node);
 }
-
-//
-// There have some special node in diffrent page
-//
-Book.prototype.handleSpecialNode = function () {
-    var objWunder = this;
-
-    // if the page is add-wunderlist.html
-    if (document.title == 'Continue-wunderlist' && boolAddWunder == true) {
-        // create a botton
-        var button = $('<button> + 添加 </button>')
-        button.addClass('submit-add-wunder');
-
-        // add Listen to this button
-        button.click(function () {
-            submitWunder(objWunder);
-        });
-
-        // append this node
-        button.insertBefore(this.node.children(':first'));
-    }
-
-    // if the page is wunderlist.html
-    else if (document.title == 'Continue-wunderlist' && boolAddWunder == false) {
-
-        //var otherInf = document.createElement('div');
-        //otherInf.className = 'other-inf';
-        var otherInf = $('<div></div>');
-        otherInf.addClass('other-inf');
-
-        var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span>';
-        otherInf.append(otherInfHTML);
-
-        // insert HTML
-        this.node.append(otherInf);
-
-        // add like botton
-        //var butLike = document.createElement('img');
-        //butLike.className = 'want-ico';
-        var butLike = $('<img />');
-        butLike.addClass('want-ico');
-
-        // listen to LIKE event, if didn't vote before
-        if (hadVoted(objWunder)) {
-            butLike.attr('src', '/static/imgs/had-want-icon.png');
-            butLike.css('cursor', 'not-allowed');
-            butLike.click(function () {
-                return;
-                // do nothing;
-            });
-        }
-        else if (!hadVoted(objWunder)) {
-            butLike.attr('src', '/static/imgs/want-icon.png')
-            butLike.css('cursor', 'pointer');
-            butLike.click(function () {
-                submitVote(objWunder);
-            });
-        }
-
-        // add vote count
-        var voteCount = $('<span></span>');
-        voteCount.addClass('vote-count');
-        voteCount.html(this.voteCount || '');
-
-        // add want-too-list
-        var wantList = $('<span></span>');
-        wantList.addClass('want-too-list').addClass('inf');
-
-        $('.want-too', otherInf).append(butLike);
-        $('.want-too', otherInf).append(voteCount)
-
-        // update the innerText
-        wantList.html(wantListStr(this.voter));
-        
-        otherInf.append(wantList);
-    }
-
-    // for donate html
-    else if (document.title == 'Continue-donate') {
-        cleanAllChilden($('.show-block'));
-        // click submit
-        var donateTip = $('<div class="donate-tip">提醒：书籍捐出后，原所有者 有权将书从bookcase中抽出。</div>');
-        var donateSubmit = $('<button type="submit" class="donate-identify">确认捐献</button>');
-
-        donateSubmit.click(function () {
-            // if no books
-            if (objWunder.bookInf.isbn == '') {
-                alert("请正确输入所捐书籍的ISBN");
-                return;
-            } else {
-                submitDonateReq(objWunder);
-            }
-        });
-    }
-
-    objWunder.node.append(donateTip);
-    objWunder.node.append(donateSubmit);
-}
-
 
 // function
 // return a want read str
@@ -194,8 +99,19 @@ function showList(res) {
     }
 
     for (var i = 0; i < count; ++i) {
-
-        var temp = new Book();
+        // if this is for wunderlist part
+        if (document.title == 'Continue-wunderlist' && boolAddWunder == false) {
+            var temp = new WunderBook();
+            temp.voteCount = res[i].vote_count;
+            temp.voter = res[i].voter;
+        }
+        // if this is for add wunderlist part
+        else if ((document.title == 'Continue-wunderlist' && boolAddWunder == true)) {
+            var temp = new AddWunderBook();
+        }
+        else if (document.title == 'Continue-donate') {
+            var temp = new DonateBook();
+        }
         temp.bookInf.image = res[i].image;
         temp.bookInf.title = res[i].title;
         temp.bookInf.publisher = res[i].publisher;
@@ -212,16 +128,10 @@ function showList(res) {
         // tags is a array
         for (var j = 0; j < res[i].tags.length; ++j) {
             temp.bookInf.tags[j] = res[i].tags[j].name;
-            console.log(temp.bookInf.tags)
         }
 
-        // if this is for wunderlist part
-        res[i].vote_count && (temp.voteCount = res[i].vote_count);
-
-        temp.voter = res[i].voter;
-
         // show
-        temp.show();
+        temp.showList();
     }
 }
 

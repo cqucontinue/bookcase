@@ -1,4 +1,37 @@
-﻿
+﻿/**********************************************
+ * 
+ *********************************************/
+function DonateBook() {
+    Book.call(this); // inheritance
+}
+inheritPrototype(DonateBook, Book);
+
+DonateBook.prototype.showList = function () {
+    // first clean the page
+    cleanAllChilden($('.show-block'));
+    // basic inf show
+    this.show();
+    var objBook = this;
+
+    // for donate html
+    
+    // click submit
+    var donateTip = $('<div class="donate-tip">提醒：书籍捐出后，原所有者 有权将书从bookcase中抽出。</div>');
+    var donateSubmit = $('<button type="submit" class="donate-identify">确认捐献</button>');
+
+    donateSubmit.click(function () {
+        // if no books
+        if (objBook.bookInf.isbn == '') {
+            alert("请正确输入所捐书籍的ISBN");
+            return;
+        } else {
+            submitDonateReq(objBook);
+        }
+    });
+
+    this.node.append(donateTip);
+    this.node.append(donateSubmit);
+}
 // 
 // choose which part of js code execute
 //
