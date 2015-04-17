@@ -5,216 +5,157 @@ var currPage = 1; // use to mark curr page
 var allPages = 1; // use to mark total count of pages
 var sortWay = 'updated_at'; // the wunderlist's sort way, default is based on update time
 
+/***********************************************************
+ * 
+ *
+ ***********************************************************/
+function AddWunderBook() {
+    Book.call(this); // for interitance
+}
+inheritPrototype(AddWunderBook, Book);
+
+AddWunderBook.prototype.showList = function () {
+    // basic inf show
+    this.show();
+    var objBook = this;
+
+    // create an add book botton
+    var button = $('<button> + 添加 </button>')
+    button.addClass('submit-add-wunder');
+
+    // add Listen to this button
+    button.click(function () {
+        submitWunder(objBook);
+    });
+
+    // append this node
+    button.insertBefore(this.node.children(':first'));
+}
+
+function WunderBook() {
+    Book.call(this);  // for interitance
+
+    this.voteCount = 0;
+    this.voter = [];
+}
+inheritPrototype(WunderBook, Book);
+
+WunderBook.prototype.showList = function () {
+    // basic inf show
+    this.show();
+    var objBook = this;
+
+    var otherInf = $('<div></div>');
+    otherInf.addClass('other-inf');
+
+    var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span>';
+    otherInf.append(otherInfHTML);
+
+    // insert HTML
+    this.node.append(otherInf);
+
+    // add like botton
+    var butLike = $('<img />');
+    butLike.addClass('want-ico');
+
+    // listen to LIKE event, if didn't vote before
+    if (hadVoted(this)) {
+        butLike.attr('src', '/static/imgs/had-want-icon.png');
+        butLike.css('cursor', 'not-allowed');
+        butLike.click(function () {
+            return;
+            // do nothing;
+        });
+    }
+    else if (!hadVoted(this)) {
+        butLike.attr('src', '/static/imgs/want-icon.png')
+        butLike.css('cursor', 'pointer');
+        butLike.click(function () {
+            submitVote(objBook);
+        });
+    }
+
+    // add vote count
+    var voteCount = $('<span></span>');
+    voteCount.addClass('vote-count');
+    voteCount.html(this.voteCount || '');
+
+    // add want-too-list
+    var wantList = $('<span></span>');
+    wantList.addClass('want-too-list').addClass('inf');
+
+    $('.want-too', otherInf).append(butLike);
+    $('.want-too', otherInf).append(voteCount)
+
+    // update the innerText
+    wantList.html(wantListStr(this.voter));
+
+    otherInf.append(wantList);
+}
 
 //
 // listetn to sort way
 //
-var timeOrder = document.getElementById('time-order');
-var popOrder = document.getElementById('pop-order');
+var timeOrder = $('#time-order');
+var popOrder = $('#pop-order');
 
-timeOrder.onclick = function () {
+timeOrder.click(function () {
 
     // change the style of order-block
-    timeOrder.style.color = '#528BB8'; // focus on time-order
-    popOrder.style.color = '#A0A0A0';
+    timeOrder.css('color', '#528BB8'); // focus on time-order
+    popOrder.css('color', '#A0A0A0');
 
     sortWay = 'updated_at';
     listenTurnOpetation(sortWay);
-}
+});
 
-popOrder.onclick = function () {
+popOrder.click(function () {
 
     // change the style of order-block
-    popOrder.style.color = '#528BB8'; // focus on pop-order
-    timeOrder.style.color = '#A0A0A0';
+    popOrder.css('color', '#528BB8'); // focus on pop-order
+    timeOrder.css('color', '#A0A0A0');
 
     sortWay = 'vote_count';
     listenTurnOpetation(sortWay);
-}
-
-function Wunderlist() {
-    // create a new node
-    var bookInfNode = document.createElement('div');
-    bookInfNode.className = "book-inf";
-
-    var detailHTML = '<img class="cover" /><div class="details"><span class="title inf">书名： <span></span></span><span class="author inf">作者： <span></span></span><span class="publisher inf">出版社： <span></span></span><span class="publish-time inf">出版时间： <span></span></span><span class="isbn inf">ISBN： <span></span></span><a class="get-more" href="javascript:;" target="_blank">了解更多</a></div>'
-    bookInfNode.innerHTML = detailHTML;
-
-    // infmation
-    this.image = "";
-    this.title = "";
-    this.author = "";
-    this.publisher = "";
-    this.pubDate = "";
-    this.isbn = "";
-    this.alt = "";
-    this.createTime = "";
-    this.tags = [];
-
-    this.voteCount = 0;
-    this.voter = [];
-
-    this.node = bookInfNode;
-}
-
-Wunderlist.prototype.show = function () {
-    
-    // basic node
-    this.node.getElementsByClassName('cover')[0].setAttribute("src", this.image);
-    this.node.getElementsByClassName('get-more')[0].setAttribute("href", this.alt);
-
-    this.node.getElementsByClassName('title')[0].lastChild.innerText
-        = this.title;
-    this.node.getElementsByClassName('author')[0].lastChild.innerText
-        = this.author;
-    this.node.getElementsByClassName('publisher')[0].lastChild.innerText
-        = this.publisher;
-    this.node.getElementsByClassName('publish-time')[0].lastChild.innerText
-        = this.pubDate;
-    this.node.getElementsByClassName('isbn')[0].lastChild.innerText
-        = this.isbn;
-
-    // specail node
-    this.handleSpecialNode();
-
-    // show
-    !boolAddWunder && document.getElementById('wunder-list').appendChild(this.node);
-    boolAddWunder && document.getElementById('show-block').appendChild(this.node);
-
-}
-
-//
-// There have some special node in diffrent page
-//
-Wunderlist.prototype.handleSpecialNode = function () {
-    var objWunder = this;
-
-    // if the page is add-wunderlist.html
-    if (boolAddWunder == true) {
-        // create a botton
-        var button = document.createElement('button');
-        button.innerText = ' + 添加 ';
-        button.className = 'submit-add-wunder';
-
-        // add Listen to this button
-        button.onclick = function () {
-            submitWunder(objWunder);
-        };
-
-        // append this node
-        //this.node.appendChild(button);
-        this.node.insertBefore(button, this.node.firstChild);
-    }
-
-    // if the page is wunderlist.html
-    if (boolAddWunder == false) {
-
-        var otherInf = document.createElement('div');
-        otherInf.className = 'other-inf';
-
-        var otherInfHTML = '<span class="create-time inf">添加时间： <span></span></span><span class="want-too inf"><span>我也想看： </span></span>';
-        otherInf.innerHTML = otherInfHTML;
-
-        // insert HTML
-        this.node.appendChild(otherInf);
-
-        // add like botton
-        var butLike = document.createElement('img');
-        butLike.className = 'want-ico';
-        // listen to LIKE event, if didn't vote before
-        if (hadVoted(objWunder)) {
-            butLike.src = '/static/imgs/had-want-icon.png';
-            butLike.style.cursor = 'not-allowed';
-            butLike.onclick = function () {
-                // do nothing;
-            }
-        }
-        else if (!hadVoted(objWunder)) {
-            butLike.src = '/static/imgs/want-icon.png';
-            butLike.onclick = function () {
-                submitVote(objWunder);
-            }
-        }
-
-        otherInf.getElementsByClassName('want-too')[0].appendChild(butLike);
-
-        // add vote count
-        var voteCount = document.createElement('span');
-        voteCount.className = 'vote-count';
-        voteCount.innerText = this.voteCount || '';
-
-        otherInf.getElementsByClassName('want-too')[0].appendChild(voteCount);
-
-        // add want-too-list
-        var wantList = document.createElement('span');
-        wantList.className = 'want-too-list inf';
-
-        var wantListStr = '';
-        var wantListLength = this.voter.length;
-        for (var i = wantListLength - 1; i >= 0 && (wantListLength - i) <= 3; --i) {
-            wantListStr += this.voter[i].fullname;
-            if ((wantListLength <= 3 && i != 0) || 
-                (wantListLength > 3 && (wantListLength - i) != 3)) {
-                wantListStr += '、';
-            }
-        }
-        if (wantListLength > 3) {
-            wantListStr += '等人也想看';
-        } else {
-            wantListStr += '也想看'
-        }
-        // update the innerText
-        wantList.innerText = wantListStr;
-
-        otherInf.appendChild(wantList);
-    }
-}
+});
 
 //
 // when want to add a book to wunderlist
 //
-function submitWunder(objWunder) {
-    //alert(objWunder.isbn);
-    var xhr = new XMLHttpRequest();
+function submitWunder(_objBook) {
+    
+    var sendData = _objBook.bookInf;
+    // add some needed CROS
+    sendData._xsrf = CookieUtil.get('_xsrf') || '';  
+    //// change the method that an array to send
+    sendData.author = JSON.stringify(_objBook.bookInf.author);
+    sendData.tags = JSON.stringify(_objBook.bookInf.tags);
 
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
+    $.ajax({
+        url: '/wunderlist/edit',
+        type: 'post',
+        async: true,
+        data: sendData
+    })
+    .done(function (resData) {
+        var res = resData;
 
         if (res.errcode && res.errcode == 1) {
             // show the err tip block
-            var errTip = document.getElementById('add-wunderlist-content')
-                .getElementsByClassName('err-tip')[0];
-            errTip.style.display = 'block';
+            var errTip = $('#add-wunderlist-content .err-tip');
+            errTip.css('display', 'block');
             if (res.errmsg && res.errmsg == 'book_got') {
-                document.getElementById('err-message').innerText = '此书已有，返回并查看';
+                $('#err-message').html('此书已有，返回并查看');
             }
             else if (res.errmsg && res.errmsg == 'book_exist') {
-                document.getElementById('err-message').innerText = '此本书在愿望清单中已存在，返回并查看';
+                $('#err-message').html('此本书在愿望清单中已存在，返回并查看');
             }
         } else {
             alert('Success!');
             // turn to wunderlist.html
             location.href = '/wunderlist.html';
         }
-    }
-
-    // the data
-    var data = new FormData();
-    
-    data.append('isbn', objWunder.isbn);
-    data.append('title', objWunder.title);
-    data.append('alt', objWunder.alt);
-    data.append('author', objWunder.author);
-    data.append('publisher', objWunder.publisher);
-    data.append('pub_date', objWunder.pubDate);
-    data.append('image', objWunder.image);
-    data.append('tags', objWunder.tags);
-    // forbid cros
-    data.append('_xsrf', CookieUtil.get('_xsrf') || '');
-
-    xhr.open('post', '/wunderlist/edit', true);
-    //xhr.setRequestHeader("_xsrf", document.cookie._xsrf || '');
-    xhr.send(data);
+    });
 }
 
 //
@@ -222,74 +163,27 @@ function submitWunder(objWunder) {
 //
 function submitVote(objBook) {
 
-    var xhr = new XMLHttpRequest()
-    var url = '/wunderlist/vote?isbn=' + objBook.isbn;
+    var url = '/wunderlist/vote?isbn=' + objBook.bookInf.isbn;
 
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
+    $.ajax({
+        url: url,
+        type: 'get',
+        async: true
+    })
+    .done(function (resData) {
+        var res = resData;
 
         // if something wrong
         if (res.errcode && res.errcode == 1) {
+            console.log(res.errmsg);
             alert('There has something wrong! Please try agian later!');
         } else {
             // refresh the count of vote
-            // TODO: when vote success, upload a new vote-icon
-            objBook.node.getElementsByClassName('want-ico')[0].src = '/static/imgs/had-want-icon.png';
-            objBook.node.getElementsByClassName('vote-count')[0].innerText = ++objBook.voteCount;
+            // TODO: when vote success, upload some information
+            $('.want-ico', objBook.node).attr('src', '/static/imgs/had-want-icon.png');
+            $('.vote-count', objBook.node).html(++objBook.voteCount);
         }
-    }
-    xhr.onerror = function () { alert('err!');}
-
-    xhr.open('get', url, true);
-    xhr.send();
-}
-
-function showWunderlist(res) {
-
-    // if something wrong
-    if (res.errcode && res.errcode == 1) {
-        alert("Something wrong!");
-        return;
-    }
-    // refresh the total pages
-    allPages = res.pages;
-
-    //if (pageTitle == 'Continue-add-wunderlist') {
-    //    res = res.books;
-    //}
-    res = (res.books || res);
-    // the number of wunderlist
-    var count = res.length;
-    console.log(count);
-    // if there is no book
-    if (count == 0) {
-        var errTip = document.getElementsByClassName('err-tip')[0];
-        errTip.style.display = 'block';
-
-        var errMsg = document.getElementById('err-message');
-        errMsg.innerText = '无结果，请核对后在输入';
-    }
-
-    for (var i = 0; i < count; ++i) {
-        var temp = new Wunderlist();
-        temp.image = res[i].image;
-        temp.title = res[i].title;
-        temp.author = res[i].author; // TODO: author is a array
-        temp.publisher = res[i].publisher;
-        temp.pubDate = res[i].pub_date || res[i].pubdate;
-        temp.alt = res[i].alt;
-        temp.createTime = res[i].create_at || '';
-        temp.isbn = res[i].isbn13 || res[i].isbn;
-        temp.tags = res[i].tags;
-
-        // if this is for wunderlist part
-        res[i].vote_count && (temp.voteCount = res[i].vote_count);
-        
-        temp.voter = res[i].voter;
-
-        // show
-        temp.show();
-    }
+    });
 }
 
 // start
@@ -309,36 +203,35 @@ switch (pageTitle) {
 
 function handleWunderlistPage() {
     // change the style of nav
-    var publicNav = document.getElementById('public-nav');
-    publicNav.getElementsByClassName('borrow')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('donate')[0].style.color = '#767779';
-    publicNav.getElementsByClassName('wonderlist')[0].style.color = '#0084B5';
-
+    $('#public-nav .borrow').css('color', '#767779');
+    $('#public-nav .donate').css('color', '#767779');
+    $('#public-nav .wunderlist').css('color', '#0084B5');
+    
     // listen to add-wunderlist-block occupied
-    var addWunder = document.getElementById('my-wunderlist');
-    addWunder.onclick = function () {
+    //var addWunder = document.getElementById('my-wunderlist');
+    var addWunder = $('#my-wunderlist');
+    addWunder.click(function () {
 
         // hidden the err tip block
-        document.getElementById('add-wunderlist-content')
-            .getElementsByClassName('err-tip')[0].style.display = 'none';
-
-        var addWunderCotent = document.getElementById('add-wunderlist-content');
-        addWunderCotent.style.display = 'block';
+        $('#add-wunderlist-content .err-tip').css('display', 'none');
+        var addWunderContent = $('#add-wunderlist-content');
+        addWunderContent.css('display', 'block');
 
         // clean
-        cleanAllChilden(document.getElementById('show-block'));
+        cleanAllChilden($('#show-block'));
+        // TODO: cleanAllChilden
 
         boolAddWunder = true;
         // listen to handleWunderlistAdd
         handleWunderlistAdd();
 
         // listen to shot down add wunderlist
-        var shotDown = document.getElementById('shot-down-add-wunder');
-        shotDown.onclick = function () {
+        var shotDown = $('#shot-down-add-wunder');
+        shotDown.click(function () {
             boolAddWunder = false;
-            addWunderCotent.style.display = 'none';
-        }
-    }
+            addWunderContent.css('display', 'none');
+        });
+    });
 
     // listen to some operator like next, prev
     listenTurnOpetation(sortWay); // default sortWay = updated_at
@@ -350,56 +243,47 @@ function handleWunderlistPage() {
 //
 function handleWunderlistAdd() {
     var isbnBox = document.getElementById('add-wunder-search');
+    var isbnBox = $('#add-wunder-search');
 
-    isbnBox.onfocus = function () {
+    isbnBox.focus(function () {
         // lister to Enter when focus on search-box 
-        this.onkeydown = function (event) {
+        $(this).keydown(function (event) {
 
             // hidden err when input agian
-            var errTip = document.getElementsByClassName('err-tip')[0];
-            errTip.style.display = 'none';
+            $('.err-tip').css('display', 'none');
 
             var e = event || window.event;
 
             // if not Enter key, return
             if (e && e.keyCode != 13) return;
 
-            document.getElementById('searching-tip').style.display = 'block';
+            $('#searching-tip').css('display', 'block');
             // remove all node that searched just now
-            var father = document.getElementById('show-block');
-            cleanAllChilden(father);
+            cleanAllChilden($('#show-block'));
 
-            var isbnCode = isbnBox.value;
+            // submit
+            submitWunderlistAdd(isbnBox.val());
+        });
+    });
+}
 
-            var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=10';
+function submitWunderlistAdd(_isbn) {
+    var isbnCode = _isbn;
 
-            // CROS
-            $.ajax({
-                url: url,
-                type: 'GET',
-                async: false,
-                dataType: 'jsonp',
-                jsonp: 'callback',
-                //ajaxSend: function () {
-                    
-                //},
-                success: function (json) {
-                    document.getElementById('searching-tip').style.display = 'none';
-                    showWunderlist(json)
-                },
-                error: function () {
-                    
-                }
-            });
-            //.done(function (data) {
-            //    document.getElementById('searching-tip').style.display = 'none';
-            //    showWunderlist(data);
-            //})
-            //.fail(function () {
-            //    alert('fail');
-            //});
-        }
-    }
+    var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=10';
+
+    // CROS
+    $.ajax({
+        url: url,
+        type: 'GET',
+        async: false,
+        dataType: 'jsonp',
+        jsonp: 'callback',
+    })
+    .done(function (resData) {
+        document.getElementById('searching-tip').style.display = 'none';
+        showList(resData);
+    });
 }
 
 
@@ -408,17 +292,19 @@ function handleWunderlistAdd() {
 //
 function getWunderlist(turnedPage, sort) {
     // send wunderlist require
-    var xhr = new XMLHttpRequest();
     var url = '/wunderlist/get?' + 'page=' + turnedPage
         + '&' + 'sort=' + sort;
 
-    xhr.onload = function () {
-        var res = JSON.parse(xhr.responseText);
-        showWunderlist(res);
-    }
-
-    xhr.open('get', url, false); // synchronous
-    xhr.send();
+    $.ajax({
+        url: url,
+        type: 'get',
+        async: false
+    })
+    .done(function (resData) {
+        // TODO: why
+        var res = JSON.parse(resData);
+        showList(res);
+    })
 }
 
 
@@ -428,80 +314,62 @@ function getWunderlist(turnedPage, sort) {
 function listenTurnOpetation(_sortWay) {
 
     // clean page
-    cleanAllChilden(document.getElementById('wunder-list')); 
+    cleanAllChilden($('#wunder-list')); 
     // get the first page of wunderlist
     getWunderlist(1, _sortWay);
     // uppdate
     updatePages();
 
     // next page
-    var nextPage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('next-page')[0];
-    nextPage.onclick = function () {
+    var nextPage = $('#wunderlist-content .next-page');
+    nextPage.click(function () {
         if (currPage == allPages) {
             alert('This is the last page!');
             return;
         }
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        cleanAllChilden($('#wunder-list')); // clean page
         getWunderlist(++currPage, _sortWay);
         updatePages();
-    }
+    });
 
     // prev page
-    var prePage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('pre-page')[0];
-    prePage.onclick = function () {
+    var prePage = $('#wunderlist-content .pre-page');
+    prePage.click(function () {
         if (currPage == 1) {
             alert('This is the first page!');
             return;
         }
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+        cleanAllChilden($('#wunder-list')); // clean page
         getWunderlist(--currPage, _sortWay);
         updatePages();
-    }
+    })
 
     // first page
-    var firstPage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('first-page')[0];
-    firstPage.onclick = function () {
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+    var firstPage = $('#wunderlist-content .first-page');
+    firstPage.click(function () {
+        cleanAllChilden($('#wunder-list')); // clean page
         currPage = 1;
         getWunderlist(currPage, _sortWay);
         updatePages();
-    }
+    });
 
     // last page
-    var lastPage = document.getElementById('wunderlist-content')
-        .getElementsByClassName('last-page')[0];
-    lastPage.onclick = function () {
-        cleanAllChilden(document.getElementById('wunder-list')); // clean page
+    var lastPage = $('#wunderlist-content .last-page');
+    lastPage.click(function () {
+        cleanAllChilden($('#wunder-list')); // clean page
         currPage = allPages;
         getWunderlist(currPage, _sortWay);
         updatePages();
-    }
+    });
     
-}
-
-//
-// clean all of childen under the node
-//
-function cleanAllChilden(father) {
-    var childen = father.childNodes;
-    var childenLength = childen.length;
-    for (var i = 0; i < childenLength; ++i) {
-        father.removeChild(childen[0]);  // there have some problem
-    }
 }
 
 //
 // update the count of curr page and total page
 //
 function updatePages() {
-    var curr = document.getElementById('wunderlist-content').getElementsByClassName('curr')[0];
-    curr.innerText = currPage;
-
-    var total = document.getElementById('wunderlist-content').getElementsByClassName('total')[0];
-    total.innerText = allPages;
+    $('#wunderlist-content .curr').html(currPage);
+    $('#wunderlist-content .total').html(allPages);
 }
 
 //

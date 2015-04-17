@@ -303,6 +303,57 @@ return:
     errcode: 1
 ```
 
+###Upload images
+```json
+method: POST
+
+uri: /image
+
+para:
+reuired:
+    image file
+
+return 
+    errmsg: "too_big"
+    errcode: 1
+    //图片大于2M
+    errmsg: "illegal_image"
+    errcode: 1
+    //打不开此类文件
+    errmsg: "bad-dimensions"
+    errcode: 1
+    //图片尺寸不合理
+    errmsg: "invalid_image"
+    errcode: 1
+    //图片不是jpg,png,gif,jpeg等格式
+    errmsg: "not find image_file"
+    errcode: 1
+    //根据地址找不到图像文件
+    errcode 0
+    //成功
+```
+
+###Change personal information
+```json
+method: POST
+
+uri: /changeinfo
+
+para:
+required(not every argument need,allow null argument):
+    fullname: string
+    password: string
+    email: string
+    phone: string
+    grade: string
+    gender: string
+    school: string
+    self_introduction: string
+
+return:
+    //成功
+    errcode: 0
+```
 
 ##Server about
 ```shell

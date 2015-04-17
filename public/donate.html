@@ -3,6 +3,7 @@
 <head>
   <title>Continue-donate</title>
   <link rel="stylesheet" href="/static/css/public.css" />
+  <script src="/static/js/jquery.js"></script>
   <script src="/static/js/checkLogin.js"></script> 
 </head>
 <body id="donate-page">
@@ -11,7 +12,7 @@
       <img id="logo" src="/static/imgs/donate-logo.png" />
       <div id="personal-inf"></div>
       <nav id="public-nav">
-        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="donate.html" target="_self">DONATE</a>|<a class="wonderlist" href="wunderlist.html" target="_self">WUNDERLIST</a>
+        <a class="borrow" href="javascript:;" target="_self">BORROW</a>|<a class="donate" href="donate.html" target="_self">DONATE</a>|<a class="wunderlist" href="wunderlist.html" target="_self">WUNDERLIST</a>
       </nav>
     </div>
   </header>
@@ -24,21 +25,23 @@
       <span>请确认信息</span>
       <div class="line"></div>
     </div>
-    <div class="book-inf">
-      <img class="cover" />
-      <div class="details">
-        <span class="title inf">书名： <span></span></span>
-        <span class="author inf">作者： <span></span></span>
-        <span class="publisher inf">出版社： <span></span></span>
-        <span class="publish-time inf">出版时间： <span></span></span>
-        <span class="isbn inf">ISBN： <span></span></span>
-        <a class="get-more" href="javascript:;" target="_blank">了解更多</a>
+    <div class="show-block">
+      <div class="book-inf">
+        <img class="cover" />
+        <div class="details">
+          <span class="title inf">书名： <span></span></span>
+          <span class="author inf">作者： <span></span></span>
+          <span class="publisher inf">出版社： <span></span></span>
+          <span class="publish-time inf">出版时间： <span></span></span>
+          <span class="isbn inf">ISBN： <span></span></span>
+          <a class="get-more" href="javascript:;" target="_blank">了解更多</a>
+        </div>
+        <div class="donate-tip">提醒：书籍捐出后，原所有者 有权将书从bookcase中抽出。</div>
+        <button type="submit" class="donate-identify">确认捐献</button>
       </div>
-      <div id="donate-tip">提醒：书籍捐出后，原所有者 有权将书从bookcase中抽出。</div>
-      <button type="submit" id="donate-identify">确认捐献</button>
     </div>
   </content>
-  <script src="/static/js/jquery.js"></script>
+  <script src="/static/js/book.js"></script>
   <script src="/static/js/index.js"></script>
 </body>
 </html>
