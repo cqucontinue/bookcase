@@ -226,15 +226,17 @@ class VoteHandler(BaseHandler):
         vote_book = coll.find_one({"isbn": isbn})
 
         # Confirm user vote or not vote
-        member_id = self.current_user
-        if member_id not in vote_book["voter"]:
+        member = self.current_user
+        del member["created"]
+        del member["last_updated"]
+        if member not in vote_book["voter"]:
             vote_book["vote_count"] += 1
-            vote_book["voter"].append(member_id)
+            vote_book["voter"].append(member)
             coll.save(vote_book)
-            vote_sucs = {
-                "errcode": 0
-            }
-            self.write(vote_sucs)
+            # Return sucs
+            new_vote_book = coll.find_one({"isbn": isbn}, {"_id": 0, 
+                "voter.created": 0, "voter.last_updated": 0})
+            self.write(new_vote_book)
         else:
             already_vote = {
                 "errcode": 1,
