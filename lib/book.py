@@ -12,6 +12,9 @@ from datetime import datetime
 
 
 class EditHandler(BaseHandler):
+    def get(self):
+        pass
+
     def post(self):
         coll = self.db[self.gsettings.COLL_BOOKS]
         book_fields = ["isbn", "title", "alt", "author",
