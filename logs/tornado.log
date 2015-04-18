@@ -1,0 +1,21 @@
+[I 150405 00:21:52 web:1825] 200 GET /login.html (127.0.0.1) 21.96ms
+[I 150405 00:21:52 web:1825] 200 GET /static/css/public.css (127.0.0.1) 16.15ms
+[I 150405 00:21:52 web:1825] 200 GET /static/imgs/login-logo.jpg (127.0.0.1) 9.86ms
+[I 150405 00:21:52 web:1825] 200 GET /static/js/index.js (127.0.0.1) 13.40ms
+[I 150405 00:21:52 web:1825] 200 GET /static/imgs/login-bg.jpg (127.0.0.1) 20.73ms
+[W 150405 00:21:53 web:1825] 404 GET /favicon.ico (127.0.0.1) 5.21ms
+[I 150405 00:21:56 web:1825] 200 POST /auth/login (127.0.0.1) 2.69ms
+[I 150405 00:22:08 web:1825] 200 POST /auth/login (127.0.0.1) 1.83ms
+[I 150405 00:22:09 web:1825] 200 POST /auth/login (127.0.0.1) 1.75ms
+[I 150405 00:22:17 web:1825] 200 POST /auth/login (127.0.0.1) 1.80ms
+[I 150405 00:22:20 web:1825] 200 POST /auth/login (127.0.0.1) 1.90ms
+[I 150405 00:22:21 web:1825] 200 POST /auth/login (127.0.0.1) 2.50ms
+[I 150405 00:22:21 web:1825] 200 POST /auth/login (127.0.0.1) 1.58ms
+[I 150405 00:22:31 web:1825] 200 POST /auth/login (127.0.0.1) 1.64ms
+[I 150405 00:22:32 web:1825] 200 POST /auth/login (127.0.0.1) 1.83ms
+[I 150405 00:23:29 web:1825] 200 GET /donate.html (127.0.0.1) 15.09ms
+[I 150405 00:23:30 web:1825] 200 GET /static/imgs/donate-logo.png (127.0.0.1) 16.33ms
+[I 150405 00:23:30 web:1825] 302 GET /auth/ (127.0.0.1) 0.64ms
+[I 150405 00:23:30 web:1825] 304 GET /static/imgs/headphoto.png (127.0.0.1) 15.47ms
+[I 150405 00:23:30 web:1825] 200 GET /auth/nologin?next=%2Fauth%2F (127.0.0.1) 0.55ms
+[I 150405 00:32:00 autoreload:195] ./server.py modified; restarting server
