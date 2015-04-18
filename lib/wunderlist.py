@@ -13,29 +13,6 @@ from datetime import datetime
 from tornado.options import define, options
 import pymongo
 
-'''
-if __name__ == "__main__":
-    define("port", default=8000, type=int, help="run on the given port")
-    define("coll_wunder", default="wunbooks", help="wunder books collection")
-
-
-class Application(tornado.web.Application):
-    def __init__(self):
-        handlers = [
-            (r"/wunderlist/get", GetWunBooksHandler),
-            (r"/wunderlist/search", WunSearchHandler),
-            (r"/wunderlist/edit", WunEditHandler),
-            (r"/wunderlist/vote", VoteHandler),
-            (r"/auth/nologin", NologinHandler)
-        ]
-        settings = {
-            "login_url": "/auth/nologin",
-            "debug": True
-        }
-        conn = pymongo.Connection("localhost", 27017)
-        self.db = conn["continue"]
-        tornado.web.Application.__init__(self, handlers, **settings)
-'''
 
 class GetWunBooksHandler(BaseHandler):
     def get(self):
@@ -81,7 +58,7 @@ class GetWunBooksHandler(BaseHandler):
             return
         
         # Connect to collection - wunbooks  
-        coll = self.db[options.coll_wunder]
+        coll = self.db[self.gsettings.COLL_WUNDER]
         # Init wunbooks
         cursor = coll.find({}, {"_id": 0, "voter.password": 0, "voter.password_hash": 0})
         cursor.sort([(sort, pymongo.DESCENDING), ("updated_at", pymongo.DESCENDING)])
@@ -119,8 +96,8 @@ class WunSearchHandler(BaseHandler):
             self.write(no_isbn)
             return
             
-        coll = self.db[options.coll_books]
-        coll_w = self.db[options.coll_wunder]
+        coll = self.db[self.gsettings.COLL_BOOKS]
+        coll_w = self.db[self.gsettings.COLL_WUNDER]
 
         book_in_books = coll.find_one({"isbn": isbn})
         book_in_wbooks = coll_w.find_one({"isbn": isbn})
@@ -165,8 +142,8 @@ class WunEditHandler(BaseHandler):
 
         # Check the book if existed in wunderlist | bookcase
         # Return error message if the book exists
-        coll = self.db[options.coll_books]
-        coll_w = self.db[options.coll_wunder]
+        coll = self.db[self.gsettings.COLL_BOOKS]
+        coll_w = self.db[self.gsettings.COLL_WUNDER]
 
         book_in_books = coll.find_one({"isbn": isbn})
         book_in_wbooks = coll_w.find_one({"isbn": isbn})
@@ -222,7 +199,7 @@ class VoteHandler(BaseHandler):
             return
 
         # Wunderlist database
-        coll = self.db[options.coll_wunder]
+        coll = self.db[self.gsettings.COLL_WUNDER]
         vote_book = coll.find_one({"isbn": isbn})
 
         # Confirm user vote or not vote
@@ -243,10 +220,3 @@ class VoteHandler(BaseHandler):
                 "errmsg": "already_vote"
             }
             self.write(already_vote)
-
-
-if __name__ == "__main__":
-    tornado.options.parse_command_line()
-    http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
-    tornado.ioloop.IOLoop.instance().start()

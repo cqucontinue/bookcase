@@ -9,35 +9,11 @@ import tornado.options
 import tornado.web
 import json
 from datetime import datetime
-import pymongo
 
-from tornado.options import define, options
-
-'''
-if __name__ == "__main__":
-    define("port", default=8000, type=int, help="run on the given port")
-    define("db_continue", default="continue", help="database name")
-    define("coll_books", default="books", help="book collection")
-
-
-class Application(tornado.web.Application):
-    def __init__(self):
-        handlers = [
-            (r"/book/edit", EditHandler),
-            (r"/book/delete", DeleteHandler),
-            (r"/book/get", GetHandler)
-        ]
-        settings = {
-            "debug": True
-        }
-        conn = pymongo.Connection("localhost", 27017)
-        self.db = conn[options.db_continue]
-        tornado.web.Application.__init__(self, handlers, **settings)
-'''
 
 class EditHandler(BaseHandler):
     def post(self):
-        coll = self.db[options.coll_books]        # Prepare database
+        coll = self.db[self.gsettings.COLL_BOOKS]
         book_fields = ["isbn", "title", "alt", "author",
                        "publisher", "image",
                        "tags", "isdonated", "donor", "pub_date"]
@@ -80,7 +56,7 @@ class EditHandler(BaseHandler):
 
 class GetHandler(BaseHandler):
     def get(self):
-        coll = self.db[options.coll_books]
+        coll = self.db[self.gsettings.COLL_BOOKS]
         books = coll.find()
         books_r = []
         for book in books:
@@ -91,7 +67,7 @@ class GetHandler(BaseHandler):
 
 class DeleteHandler(BaseHandler):
     def get(self):
-        coll = self.db[options.coll_books]
+        coll = self.db[self.gsettings.COLL_BOOKS]
 
         isbn = self.get_argument(isbn)
         if not isbn:
@@ -107,10 +83,3 @@ class DeleteHandler(BaseHandler):
                 "errcode": 0
             }
             self.write(remove_sucs)
-
-
-if __name__ == "__main__":
-    tornado.options.parse_command_line()
-    http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
-    tornado.ioloop.IOLoop.instance().start()

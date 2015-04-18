@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Import global settings
+import settings as gsettings
 # Private module
 from lib.base import BaseHandler
 from lib.book import (GetHandler, EditHandler,
@@ -21,25 +23,29 @@ import pymongo
 
 from tornado.options import define, options
 
+# Update some options with providing command arguments 
+# can make debug easier
 # Define server
-define("port", default=8000, type=int, help="run on the given port")
+define("port", default=gsettings.LISTEN_PORT, type=int, help="run on the given port")
 # Define mongodb server
-define("mongodb_host", default="127.0.0.1", help="database host")
-define("mongodb_port", default=27017, help="database port")
-# Define DB and collections in mongodb
-define("db_continue", default="continue", help="database name")
-define("coll_books", default="books", help="book collection")
-define("coll_members", default="members", help="basic member information collection")
-define("coll_wunder", default="wunbooks", help="wunder books collection")
+define("mongodb_host", default=gsettings.MONGODB_HOST, help="mongodb host")
+define("mongodb_port", default=gsettings.MONGODB_PORT, help="mongodb port")
+# Define DB
+define("db_continue", default=gsettings.DB_CONTINUE, help="database name")
 
 
 class Application(tornado.web.Application):
     def __init__(self):
+        # Load global settings, then this variable-gsettings can be
+        # used in tornado.web.RequestHandler with self.application.gsettings
+        # and in tornado.web.Application with self.gsettings
+        self.gsettings = gsettings
+
         handlers = [
-            # Handler fisrt request
+            # Handler first request
             (r"/", MainHandler),
             (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
-            # API
+            # RESTful API
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
             (r"/book/delete", DeleteHandler),
@@ -54,19 +60,22 @@ class Application(tornado.web.Application):
             (r"/wunderlist/vote", VoteHandler)
             # Add new Handler HERE
         ]
+
+        # These settings are for the tornado internal settings
+        # and they should refer to global settings
         settings = {
-            "login_url": "/auth/nologin",
-            # TODO finish xrsf
-            "xsrf_cookies": True,
+            "login_url": self.gsettings.LOGIN_URL,
+            "xsrf_cookies": self.gsettings.XSRF_COOKIES,
             # Suite to one instance
             "cookie_secret": superuuid.generate(),
-            # favicon.ico robots.txt also direct here
-            "static_url_prefix": "/static/",
-            "static_path": "public",
-            "debug": True
+            # favicon.ico robots.txt also direct into here
+            "static_url_prefix": self.gsettings.STATIC_URL_PREFIX,
+            "static_path": self.gsettings.STATIC_PATH,
+            "debug": self.gsettings.DEBUG
         }
         tornado.web.Application.__init__(self, handlers, **settings)
 
+        # Init database
         conn = pymongo.Connection(options.mongodb_host,
                                   options.mongodb_port)
         self.db = conn[options.db_continue]
@@ -82,9 +91,12 @@ class MainHandler(BaseHandler):
 
 
 def main():
+    # If DEBUG, then use pretty console log
+    if gsettings.DEBUG is False:
+        tornado.options.options.log_file_prefix = gsettings.LOG_FILE_PREFIX
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port, address="127.0.0.1")
+    http_server.listen(options.port, address=gsettings.LISTEN_ADDRESS)
     tornado.ioloop.IOLoop.instance().start()
 
 
