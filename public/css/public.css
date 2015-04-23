@@ -618,3 +618,21 @@ a {
 #add-wunderlist-content #content-wrap .book-inf .details .get-more {
     display: none;
 }
+
+
+
+
+
+/*
+    work for lotsize-donate.html
+*/
+
+#lotsize-donate-page .donate-list {
+    width: 500px;
+    height: 300px;
+    border: 1px solid #767779;
+}
+
+#lotsize-donate-page .unsuccess-list {
+    display: none;
+}
