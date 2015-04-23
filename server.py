@@ -4,7 +4,7 @@
 # Import global settings
 import settings as gsettings
 # Private module
-from lib.base import BaseHandler
+from lib.base import BaseHandler, BaseStaticFileHandler
 from lib.book import (GetHandler, EditHandler,
                       DeleteHandler)
 from lib.auth import (AuthHandler, LoginHandler,
@@ -44,7 +44,8 @@ class Application(tornado.web.Application):
         handlers = [
             # Handler first request
             (r"/", MainHandler),
-            (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
+            # (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
+            (r"/(.*\.html)", HtmlHandler),
             # RESTful API
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
@@ -71,6 +72,7 @@ class Application(tornado.web.Application):
             # favicon.ico robots.txt also direct into here
             "static_url_prefix": self.gsettings.STATIC_URL_PREFIX,
             "static_path": self.gsettings.STATIC_PATH,
+            "static_handler_class": BaseStaticFileHandler,
             "debug": self.gsettings.DEBUG
         }
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -83,11 +85,15 @@ class Application(tornado.web.Application):
 
 class MainHandler(BaseHandler):
     def get(self):
-        self.set_cookie("_xsrf", self.xsrf_token)
         if self.get_current_user():
-            self.redirect("/donate.html")
+            self.redirect("/static/donate.html")
         else:
-            self.redirect("/login.html")
+            self.redirect("/static/login.html")
+
+
+class HtmlHandler(BaseHandler):
+    def get(self, html_name):
+        self.redirect("/static/" + html_name)
 
 
 def main():

@@ -7,12 +7,13 @@ class BaseHandler(tornado.web.RequestHandler):
     def db(self):
         return self.application.db
 
+    # @property
+    # def settings(self):
+    #   return self.application.settings
+    
     @property
     def gsettings(self):
         return self.application.gsettings
-    
-    # TODO
-    # Rewrite error page
 
     def get_current_user(self):
         member_id = self.get_secure_cookie("member_id")
@@ -27,3 +28,14 @@ class BaseHandler(tornado.web.RequestHandler):
         member["member_id"] = member_id
         # return dumps(user)
         return member
+
+    def set_default_headers(self):
+        self.set_header("Server", "Tornado/%s" % tornado.version)
+
+    def prepare(self):
+        self.set_cookie("_xsrf", self.xsrf_token)
+
+
+class BaseStaticFileHandler(tornado.web.StaticFileHandler):
+    def set_default_headers(self):
+        self.set_header("Server", "Nginx+/%s" % tornado.version)

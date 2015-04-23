@@ -20,7 +20,6 @@ class AuthHandler(BaseHandler):
 
 class NologinHandler(BaseHandler):
     def get(self):
-        self.set_cookie("_xsrf", self.xsrf_token)
         not_login = {
             "errmsg": "not_login",
             "errcode": 1
