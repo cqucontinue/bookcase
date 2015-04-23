@@ -4,13 +4,8 @@ Book Collection
 >To manage books in 113
 
 ```
-<<<<<<< HEAD
 Deployment target: book.113continue.com
 SSH supported
-=======
-Deploy target: book.113continue.com
-U can ssh continue@book.113continue.com to update code and test your new feature 
->>>>>>> 041e6846f96f60e3380e36a01f80d1009c043949
 ```
 
 ##noSQL DB model
@@ -282,7 +277,8 @@ GET /v1/books/s
 }
 ```
 
-<!--
+##Old version API
+####Edit books
 ```json
 method: POST
 
@@ -504,7 +500,6 @@ return:
     errmsg: "already_vote
     errcode: 1
 ```
--->
 
 ##Server about
 ```shell

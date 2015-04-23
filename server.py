@@ -62,7 +62,7 @@ class Application(tornado.web.Application):
             (r"/wunderlist/edit", WunEditHandler),
             (r"/wunderlist/vote", VoteHandler),
             # RESTful API
-            (r"/v1/books/isbn/(.*)", V1_AddBookHandler)
+            (r"/v1/books/", V1_AddBookHandler)
             # Add new Handler HERE
         ]
 
