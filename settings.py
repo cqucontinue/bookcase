@@ -7,7 +7,7 @@ import os
 DEBUG = True
 
 # Security about
-XSRF_COOKIES = False
+XSRF_COOKIES = True
 
 # Login url for auto jump
 LOGIN_URL="/auth/nologin"

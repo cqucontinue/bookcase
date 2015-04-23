@@ -34,7 +34,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def prepare(self):
         self.set_cookie("_xsrf", self.xsrf_token)
-        self.set_status(500, "Default set 500 in prepare")
+        # self.set_status(500, "Default set 500 in prepare")
 
 
 class BaseStaticFileHandler(tornado.web.StaticFileHandler):
