@@ -4,8 +4,8 @@ Book Collection
 >To manage books in 113
 
 ```
-Dev Server IP: 182.92.167.199
-U can ssh continue@IP to update code and test your new feature 
+Deploy target: book.113continue.com
+U can ssh continue@book.113continue.com to update code and test your new feature 
 ```
 
 ##noSQL DB model
