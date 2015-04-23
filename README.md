@@ -70,7 +70,8 @@ wunbooks {
 
 ##RESTful API About
 > 1. Format refer to [douban API](http://developers.douban.com/wiki/?title=api_v2)
-> 2. Concept refer to 
+> 2. Concept refer to
+    - [REST API Quick Tips](http://www.restapitutorial.com/lessons/restquicktips.html)
     - [Principles of good RESTful API Design](http://codeplanet.io/principles-good-restful-api-design)
     - [RESTful API 设计指南](http://www.ruanyifeng.com/blog/2014/05/restful_api.html)
     - [理解 RESTful 架构](http://www.ruanyifeng.com/blog/2011/09/restful.html)
@@ -152,7 +153,7 @@ API返回值有两种
 ####添加书籍
 
 ```
-POST    /v1/book/
+POST    /v1/books/isbn/:name
 ```
 
 |参数|意义|备注|
@@ -175,7 +176,7 @@ POST    /v1/book/
 ####更新书籍信息
 
 ```
-PUT    /v1/book/
+PUT    /v1/books/isbn/:name
 ```
 
 |参数|意义|备注|
@@ -198,7 +199,7 @@ PUT    /v1/book/
 ####删除图书
 
 ```
-DELETE  /v1/book/isbn/:name
+DELETE  /v1/books/isbn/:name
 ```
 
 返回: status=200, OK
@@ -210,7 +211,7 @@ DELETE  /v1/book/isbn/:name
 
 Ex.
 ```
-GET /v1/book/isbn?fields=isbn,title
+GET /v1/books/isbn?fields=isbn,title
 ```
 
 返回数据:
@@ -225,7 +226,7 @@ GET /v1/book/isbn?fields=isbn,title
 ####获取图书
 
 ```
-GET /v1/book/
+GET /v1/books/
 ```
 
 |参数|意义|备注|
@@ -247,7 +248,7 @@ GET /v1/book/
 ####根据isbn获取图书信息
 
 ```
-GET /v1/book/isbn/:name
+GET /v1/books/isbn/:name
 ```
 
 返回图形信息,status=200
@@ -256,7 +257,7 @@ GET /v1/book/isbn/:name
 ####搜索图书
 
 ```
-GET /v1/book/search
+GET /v1/books/s
 ```
 
 |参数|意义|备注|
