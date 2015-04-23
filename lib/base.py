@@ -30,10 +30,11 @@ class BaseHandler(tornado.web.RequestHandler):
         return member
 
     def set_default_headers(self):
-        self.set_header("Server", "Tornado/%s" % tornado.version)
+        self.set_header("Server", "Tornado+/%s" % tornado.version)
 
     def prepare(self):
         self.set_cookie("_xsrf", self.xsrf_token)
+        self.set_status(500, "Default set 500 in prepare")
 
 
 class BaseStaticFileHandler(tornado.web.StaticFileHandler):

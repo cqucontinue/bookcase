@@ -153,7 +153,7 @@ API返回值有两种
 ####添加书籍
 
 ```
-POST    /v1/books/isbn/:name
+POST    /v1/books/
 ```
 
 |参数|意义|备注|
@@ -176,7 +176,7 @@ POST    /v1/books/isbn/:name
 ####更新书籍信息
 
 ```
-PUT    /v1/books/isbn/:name
+PUT    /v1/books/
 ```
 
 |参数|意义|备注|
@@ -199,7 +199,7 @@ PUT    /v1/books/isbn/:name
 ####删除图书
 
 ```
-DELETE  /v1/books/isbn/:name
+DELETE  /v1/books/
 ```
 
 返回: status=200, OK

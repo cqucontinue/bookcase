@@ -3,8 +3,10 @@
 
 # Import global settings
 import settings as gsettings
-# Private module
 from lib.base import BaseHandler, BaseStaticFileHandler
+# Private new handler
+from lib.book import V1_AddBookHandler
+# Private old handler
 from lib.book import (GetHandler, EditHandler,
                       DeleteHandler)
 from lib.auth import (AuthHandler, LoginHandler,
@@ -46,7 +48,7 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             # (r"/(.*\.html)", web.StaticFileHandler, {"path": "public"}),
             (r"/(.*\.html)", HtmlHandler),
-            # RESTful API
+            # Old API
             (r"/book/get", GetHandler),
             (r"/book/edit", EditHandler),
             (r"/book/delete", DeleteHandler),
@@ -58,7 +60,9 @@ class Application(tornado.web.Application):
             (r"/auth/register", RegisterHandler),
             (r"/wunderlist/get", GetWunBooksHandler),
             (r"/wunderlist/edit", WunEditHandler),
-            (r"/wunderlist/vote", VoteHandler)
+            (r"/wunderlist/vote", VoteHandler),
+            # RESTful API
+            (r"/v1/books/isbn/(.*)", V1_AddBookHandler)
             # Add new Handler HERE
         ]
 
