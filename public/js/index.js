@@ -132,7 +132,7 @@ function submitLoginReq() {
 }
 
 function getDonateBook(isbnCode) {
-
+    var bookArray = [];
     var url = 'https://api.douban.com/v2/book/search?q=' + isbnCode + '&count=1';
 
     // CROS
@@ -144,11 +144,13 @@ function getDonateBook(isbnCode) {
         jsonp: 'callback'
     })
     .done(function (resData) {
-        showList(resData);
+        bookArray = showList(resData);
     })
     .fail(function () {
         alert('Something wrong, try again later.');
     });
+    //console.log(bookArray)
+    return bookArray;
 }
 
 function submitDonateReq(_objBook) {
@@ -173,8 +175,15 @@ function submitDonateReq(_objBook) {
         if (res.errcode == 1) {
             alert("失败");
         } else {
-            alert("捐赠成功！");
-            location.href = '/donate.html';
+            if (document.title == 'Continue-donate') {
+                alert("捐赠成功！");
+                location.href = '/donate.html';
+            }
+            else {
+                var successList = $('<div></div>');
+                successList.html(sendData.title + '   ' + sendData.isbn + '\n');
+                $('.success-donated').append(successList);
+            }
         }
     });
 }

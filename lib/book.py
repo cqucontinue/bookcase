@@ -10,7 +10,22 @@ import tornado.web
 import json
 from datetime import datetime
 
+class V1_AddBookHandler(BaseHandler):
+    def get(self):
+        self.set_status(404)
+        self.write({
+            "request": self.request.full_url(),
+            "errmsg": "uri_not_found",
+            "errcode": 12
+            })
 
+    def post(self):
+        pass
+
+
+####################################
+############Old API#################
+####################################
 class EditHandler(BaseHandler):
     def get(self):
         pass

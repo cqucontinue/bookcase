@@ -11,8 +11,7 @@ function inheritPrototype(subType, superType) {
     subType.prototype = prototype;
 }
 
-
-
+var bookArray = [];
 function Book() {
     // basic infmation
     this.bookInf = {
@@ -98,6 +97,8 @@ function showList(res) {
         $('#err-message').html('无结果，请核对后在输入');
     }
 
+    //var bookArray = [];
+    
     for (var i = 0; i < count; ++i) {
         // if this is for wunderlist part
         if (document.title == 'Continue-wunderlist' && boolAddWunder == false) {
@@ -109,7 +110,8 @@ function showList(res) {
         else if ((document.title == 'Continue-wunderlist' && boolAddWunder == true)) {
             var temp = new AddWunderBook();
         }
-        else if (document.title == 'Continue-donate') {
+            //  if (document.title == 'Continue-donate')
+        else {
             var temp = new DonateBook();
         }
         temp.bookInf.image = res[i].image;
@@ -132,7 +134,12 @@ function showList(res) {
 
         // show
         temp.showList();
+        // save
+        bookArray.push(temp);
+        //console.log(bookArray)
     }
+
+    return bookArray;
 }
 
 //
