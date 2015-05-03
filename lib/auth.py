@@ -100,7 +100,7 @@ class RegisterHandler(BaseHandler):
             return
 
         if member_id:
-            coll = self.db[self.gsettings.COLL_MEMBRES]
+            coll = self.db[self.gsettings.COLL_MEMBERS]
             
             if coll.find_one({"_id": member_id}) is not None:
                 member_exist = {

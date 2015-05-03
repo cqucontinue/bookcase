@@ -82,7 +82,7 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **settings)
 
         # Init database
-        conn = pymongo.Connection(options.mongodb_host,
+        conn = pymongo.MongoClient(options.mongodb_host,
                                   options.mongodb_port)
         self.db = conn[options.db_continue]
 
