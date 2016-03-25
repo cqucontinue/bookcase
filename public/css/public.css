@@ -158,7 +158,7 @@ a {
     background-image: url(/static/imgs/donate_title.jpg);
 }
 
-#donate-content #search-box {
+#donate-content #search-box, #search-borrow-box {
     /*display: inline-flex;*/
     position: relative;
     top: 365px;

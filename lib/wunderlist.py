@@ -15,6 +15,7 @@ import pymongo
 
 
 class GetWunBooksHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
         page = self.get_argument("page", None)
         # pmax = [1, 20]
@@ -86,6 +87,7 @@ class GetWunBooksHandler(BaseHandler):
 
 
 class WunSearchHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
         isbn = self.get_argument("isbn", None)
         if not isbn:
@@ -126,6 +128,7 @@ class WunSearchHandler(BaseHandler):
 
 
 class WunEditHandler(BaseHandler):
+    @tornado.web.authenticated
     def post(self):
         if not self.get_current_user():
             self.redirect("/auth/nologin")

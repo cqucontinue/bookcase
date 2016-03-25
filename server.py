@@ -15,6 +15,7 @@ from lib.auth import (AuthHandler, LoginHandler,
 from lib.wunderlist import (WunEditHandler, GetWunBooksHandler,
                             VoteHandler)
 from lib.search import SearchHandler
+from lib.borrow import BorrowBookHandler
 from lib import superuuid
 # Public module
 import tornado.locale
@@ -62,7 +63,8 @@ class Application(tornado.web.Application):
             (r"/wunderlist/edit", WunEditHandler),
             (r"/wunderlist/vote", VoteHandler),
             # RESTful API
-            (r"/v1/books/", V1_AddBookHandler)
+            (r"/v1/books/", V1_AddBookHandler),
+            (r"/book/borrowing", BorrowBookHandler)
             # Add new Handler HERE
         ]
 

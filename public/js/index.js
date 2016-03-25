@@ -153,6 +153,59 @@ function getDonateBook(isbnCode) {
     return bookArray;
 }
 
+// 搜索测试,实现后请删除
+$("#search-borrow-box").click(function(){
+    var bookArray = [];
+    if ($("#search-borrow-box").val() == '') return;
+    var url = "http://127.0.0.1:8000/book/search?qs=" + $("#search-borrow-box").val();
+
+    $.ajax({
+        url: url,
+        type: "GET"
+    })
+    .done(function(resData) {
+        bookArray = resData.books;
+        console.log(bookArray);
+    });
+});
+
+// 借书等动作测试,实现后请删除
+$("#submit").click(function() {
+    var url = "http://127.0.0.1:8000/book/borrowing";
+
+    // $.ajax({
+    //     url: url,
+    //     type: "POST",
+    //     data: {
+    //         'isbn': $("#isbn").val(),
+    //         '_xsrf': CookieUtil.get('_xsrf') || ''
+    //     }
+    // })
+    // $.ajax({
+    //     url: url,
+    //     type: "GET"
+    // })
+    // $.ajax({
+    //     url: url,
+    //     type: "PUT",
+    //     data: {
+    //         'isbn': $("#isbn").val(),
+    //         '_xsrf': CookieUtil.get('_xsrf') || ''
+    //     }
+    // })
+    // $.ajax({
+    //         url: url,
+    //         type: "DELETE",
+    //         data: {
+    //             'isbn': $("#isbn").val(),
+    //             '_xsrf': CookieUtil.get('_xsrf') || ''
+    //         }
+    //     })
+    // .done(function(resData) {
+    //     console.log(resData);
+    // });
+});
+
 function submitDonateReq(_objBook) {
 
     var sendData = _objBook.bookInf;
