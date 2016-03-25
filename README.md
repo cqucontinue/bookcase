@@ -239,7 +239,7 @@ GET /v1/books/isbn?fields=isbn,title
 ####获取图书
 
 ```
-GET /v1/books/               未实现
+GET /v1/books/
 ```
 
 |参数|意义|备注|
@@ -261,7 +261,7 @@ GET /v1/books/               未实现
 ####根据isbn获取图书信息
 
 ```
-GET /v1/books/isbn/:name     未实现
+GET /v1/books/isbn/:name
 ```
 
 返回图形信息,status=200
@@ -270,7 +270,7 @@ GET /v1/books/isbn/:name     未实现
 ####搜索图书
 
 ```
-GET /v1/books/s              未实现
+GET /v1/books/s             
 ``` 
 
 |参数|意义|备注|
