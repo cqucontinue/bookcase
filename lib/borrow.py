@@ -14,11 +14,13 @@ from datetime import datetime, timedelta
 class BorrowBookHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
+		page = self.get_argument("page", 1)
 		user_id = self.current_user["fullname"]
 
 		coll = self.db[self.gsettings.COLL_BORROW]
 		books = []
-		for book in coll.find({"user": user_id}):
+		for book in coll.find({"user": user_id}).skip(self.gsettings.MAX_BOOKS_PER_PAGE \
+												 * (page - 1)).limit(self.gsettings.MAX_BOOKS_PER_PAGE):
 			del book["_id"]
 			book["borrow_time"] = book["borrow_time"].__format__("%Y-%m-%d")
 			book["return_time"] = book["return_time"].__format__("%Y-%m-%d")
@@ -27,8 +29,7 @@ class BorrowBookHandler(BaseHandler):
 			del temp_book["_id"]
 			book["book_info"] = temp_book
 			books.append(book)
-		print books
-		self.write({"books": books})
+		self.write({"books": books, "current_page": page})
 
 	@tornado.web.authenticated
 	def post(self):
@@ -49,7 +50,7 @@ class BorrowBookHandler(BaseHandler):
 		coll = self.db[self.gsettings.COLL_BLACK_LIST]
 		coll_borrow = self.db[self.gsettings.COLL_BORROW]
 		black_user = coll.find_one({"user": user_id})
-		if black_user and black_user["count"] >= 3:
+		if black_user and black_user["count"] > 3:
 			forbidden_borrow = {
 				"errmsg": "forbidden_borrow",
 				"errcode": 1
@@ -80,7 +81,7 @@ class BorrowBookHandler(BaseHandler):
 			
 		coll_borrow = self.db[self.gsettings.COLL_BORROW]
 		book = coll_borrow.find_one({"book": isbn, "user": user_id})
-		if book["count"] >= 3:
+		if book["count"] > 3:
 			out_of_number = {
 				"errmsg": "out_of_number",
 				"errcode": 1

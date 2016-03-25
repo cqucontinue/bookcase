@@ -181,10 +181,10 @@ $("#submit").click(function() {
     //         '_xsrf': CookieUtil.get('_xsrf') || ''
     //     }
     // })
-    // $.ajax({
-    //     url: url,
-    //     type: "GET"
-    // })
+    $.ajax({
+        url: url,
+        type: "GET"
+    })
     // $.ajax({
     //     url: url,
     //     type: "PUT",
@@ -201,9 +201,9 @@ $("#submit").click(function() {
     //             '_xsrf': CookieUtil.get('_xsrf') || ''
     //         }
     //     })
-    // .done(function(resData) {
-    //     console.log(resData);
-    // });
+    .done(function(resData) {
+        console.log(resData);
+    });
 });
 
 function submitDonateReq(_objBook) {

@@ -65,6 +65,19 @@ wunbooks {
     "voter": ["member_id", ""],
     "vote_count": "int"
 }
+
+borrowbooks {
+    "book": "isbn", 
+    "user": "fullname", 
+    "borrow_time": "ISODate Object", 
+    "return_time": "ISODate Object",
+    "count": "int"    //记录续借的次数,不能超过三次
+}
+
+blacklist {
+    "user": "fullname",
+    "count": "int"   //记录不按时还书的次数,超过三次将不能借书
+}
 ```
 
 
@@ -226,7 +239,7 @@ GET /v1/books/isbn?fields=isbn,title
 ####获取图书
 
 ```
-GET /v1/books/
+GET /v1/books/               未实现
 ```
 
 |参数|意义|备注|
@@ -248,7 +261,7 @@ GET /v1/books/
 ####根据isbn获取图书信息
 
 ```
-GET /v1/books/isbn/:name
+GET /v1/books/isbn/:name     未实现
 ```
 
 返回图形信息,status=200
@@ -257,8 +270,8 @@ GET /v1/books/isbn/:name
 ####搜索图书
 
 ```
-GET /v1/books/s
-```
+GET /v1/books/s              未实现
+``` 
 
 |参数|意义|备注|
 |----|----|----|
@@ -501,6 +514,149 @@ return:
     errcode: 1
 ```
 
+##Updated API
+####搜索图书
+```json
+method: GET
+
+uri: /book/search?qs=xxx
+Ex: /book/search/?qs=Python
+
+return:
+    // 该书已借
+    {
+        books: [
+            {
+                "isbn": "...",
+                "title": "...",
+                ...,
+                "borrow_status": 1,
+                "borrow_user": "fullname",
+                "return_time": "..."
+            },
+            ...
+        ]
+    }
+
+    //该书未借
+    {
+        books: [
+            {
+                "isbn": "...",
+                "title": "...",
+                ...,
+                "borrow_status": 0,
+            },
+            ...
+        ]
+    }
+
+    //发生错误
+    {
+        "errmsg": "no_qs",
+        "errcode": 1
+    }
+```
+
+####获取所借书籍
+```json
+method: GET
+
+uri: /book/borrowing?page=1   //默认为1,且每页不超过8本书
+
+return:
+    {
+        current_page: ...,
+        books: [
+            {
+                "borrow_time": "...",
+                "return_time": "...",
+                "book_info": {
+                    "isbn": "...",
+                    ...
+                }
+            },
+            ...
+        ]
+    }
+```
+
+####借书
+```json
+notice:
+        借书时间期限是15天,可以续借,但是最多三次
+        未在期限之后1天内归还者,记入黑名单一次,超过三次将不能再借书
+        不能借书时,再想借书就找官加文
+
+method: POST
+
+uri: /book/borrowing
+
+param:
+required:
+    isbn: string
+    _xsrf: string in cookie
+
+return:
+     // 成功
+    errcode: 0
+
+    or
+
+    errmsg: "no_isbn",
+    errcode: 1
+```
+
+####续借图书
+```json
+method: PUT
+
+uri: /book/borrowing
+
+param:
+required:
+    isbn: string
+    _xsrf: string in cookie
+
+return:
+     // 成功
+    errcode: 0
+
+    or
+
+    errmsg: "no_isbn",
+    errcode: 1
+
+    or
+
+    errmsg: "out_of_number",     //续借超过三次
+    errcode: 1
+```
+
+####归还图书
+```json
+method: DELETE
+
+uri: /book/borrowing
+
+param:
+required:
+    isbn: string
+    _xsrf: string in cookie
+
+return:
+     // 成功
+    errcode: 0
+
+    or
+
+    errmsg: "no_isbn",
+    errcode: 1
+
+    or
+
+    超过期限1天不归还记入黑名单一次
+```
 
 ##Python module
 `passlib`, `pymongo`, `tornado`

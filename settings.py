@@ -36,3 +36,4 @@ COLL_MEMBERS = "members"
 COLL_WUNDER = "wunbooks"
 COLL_BORROW = "borrowbooks"
 COLL_BLACK_LIST = "blacklist"
+MAX_BOOKS_PER_PAGE = 8
